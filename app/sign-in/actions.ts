@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 import { recordAuditEvent } from "@/lib/audit";
+import { signUpWithEmail, SIGN_UP_SUCCESS_MESSAGE } from "@/lib/auth-sign-up";
 import { getAppUrl, getBaseUrl, getClientIp, maskEmail, safeRedirectPath } from "@/lib/request";
 import { applyRateLimit } from "@/lib/security";
 import { createClient } from "@/lib/supabase/server";
@@ -138,47 +139,33 @@ export async function signUpAction(formData: FormData) {
       redirect(encodeMessage("/sign-in", "error", "Too many sign-up attempts. Try again later."));
     }
 
-    const supabase = await createClient();
     const appUrl = getAppUrl(headerBag);
-    const { data, error } = await supabase.auth.signUp({
+    const result = await signUpWithEmail({
+      appUrl,
+      displayName: parsed.data.displayName,
       email: parsed.data.email,
-      password: parsed.data.password,
-      options: {
-        emailRedirectTo: `${appUrl}/auth/confirm?next=/dashboard`,
-        data: {
-          display_name: parsed.data.displayName,
-          home_city: ""
-        }
-      }
+      password: parsed.data.password
     });
 
-    if (error) {
+    if (!result.ok) {
       await recordAuditEvent({
         eventType: "auth",
         message: "Failed sign-up attempt",
         severity: "warn",
-        metadata: { ip, email: maskEmail(parsed.data.email), reason: error.message }
+        metadata: { ip, email: maskEmail(parsed.data.email), reason: result.message }
       });
-      redirect(
-        encodeMessage("/sign-in", "error", getAuthErrorMessage(error, "sign-up"))
-      );
+      redirect(encodeMessage("/sign-in", "error", result.message));
     }
 
     await recordAuditEvent({
-      userId: data.user?.id ?? null,
+      userId: result.userId,
       eventType: "auth",
       message: "User signed up",
       severity: "info",
       metadata: { ip, email: maskEmail(parsed.data.email) }
     });
 
-    redirect(
-      encodeMessage(
-        "/sign-in",
-        "message",
-        "Account created. Check your email to verify your address before signing in."
-      )
-    );
+    redirect(encodeMessage("/sign-in", "message", SIGN_UP_SUCCESS_MESSAGE));
   } catch (error) {
     if (isRedirectError(error)) {
       throw error;

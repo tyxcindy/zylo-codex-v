@@ -8,10 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { getApiErrorMessage } from "@/lib/client/api";
+import { submitImportRequest, waitForImportCompletion } from "@/lib/client/imports";
 import type { SourceArtifact } from "@/lib/domain";
 
 const modes = [
-  { id: "url", label: "Paste a link", icon: Link2 },
+  { id: "url", label: "Links from Instagram, Tiktok, Blogs, etc", icon: Link2 },
   { id: "text", label: "Paste text", icon: Type },
   { id: "image", label: "Upload a screenshot", icon: ImagePlus }
 ] as const;
@@ -38,56 +40,90 @@ export function ImportWorkbench({ sourceArtifacts }: { sourceArtifacts: SourceAr
   const [statusTone, setStatusTone] = useState<"neutral" | "error" | "success">("neutral");
   const [loading, setLoading] = useState(false);
   const recentArtifacts = sourceArtifacts.slice(0, 3);
+  const trimmedContent = content.trim();
+  const trimmedDestinationHint = destinationHint.trim();
 
   async function handleSubmit() {
+    if (!trimmedContent) {
+      setStatus("Add the reel link, caption, or screenshot text first.");
+      setStatusTone("error");
+      return;
+    }
+
     setLoading(true);
     setStatus(null);
     setStatusTone("neutral");
 
     try {
-      const response = await fetch("/api/imports", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          type: mode,
-          content,
-          destinationHint
-        })
+      const payload = await submitImportRequest({
+        type: mode,
+        content: trimmedContent,
+        destinationHint: trimmedDestinationHint || undefined
       });
 
-      const payload = await response.json().catch(() => null);
-      setLoading(false);
+      if (payload.statusUrl) {
+        setStatus(
+          payload.importJob?.stageDetail ?? "Import queued. Recovering transcript and place evidence."
+        );
 
-      if (!response.ok) {
-        setStatus(payload?.error ?? payload?.errors?.[0] ?? "Import failed.");
-        setStatusTone("error");
-        router.refresh();
-        return;
+        const finalStatus = await waitForImportCompletion(payload.statusUrl, {
+          onProgress: (jobStatus) => {
+            if (jobStatus.importJob?.stageDetail) {
+              setStatus(jobStatus.importJob.stageDetail);
+            }
+          }
+        });
+
+        if (finalStatus.job?.status === "complete") {
+          setStatus(
+            finalStatus.job?.extractedPlaces
+              ? `Imported ${finalStatus.job.extractedPlaces} place(s) and saved the job.`
+              : "Import finished, but no actionable places were found."
+          );
+          setStatusTone(finalStatus.job?.extractedPlaces ? "success" : "error");
+          setContent("");
+          setDestinationHint("");
+        } else if (finalStatus.job?.status === "failed" || finalStatus.importJob?.status === "failed") {
+          setStatus(
+            finalStatus.importJob?.errorMessage ??
+              "This import failed before Zylo could save any places."
+          );
+          setStatusTone("error");
+        } else {
+          setStatus("Import is still processing. Refresh in a moment for the latest status.");
+          setStatusTone("neutral");
+        }
+      } else {
+        setStatus(
+          payload?.job?.extractedPlaces
+            ? `Imported ${payload.job.extractedPlaces} place(s) and saved the job.`
+            : "Import finished, but no actionable places were found."
+        );
+        setStatusTone(payload?.job?.extractedPlaces ? "success" : "error");
+        setContent("");
+        setDestinationHint("");
       }
 
-      setStatus(
-        payload?.job?.extractedPlaces
-          ? `Imported ${payload.job.extractedPlaces} place(s) and saved the job.`
-          : "Import finished, but no actionable places were found."
-      );
-      setStatusTone(payload?.job?.extractedPlaces ? "success" : "error");
-      setContent("");
-      setDestinationHint("");
       router.refresh();
-    } catch {
-      setLoading(false);
-      setStatus("Import request failed before Zylo received it. Refresh the page and try again.");
+    } catch (error) {
+      setStatus(
+        getApiErrorMessage(
+          error,
+          "Import request failed before Zylo received it. Refresh the page and try again."
+        )
+      );
       setStatusTone("error");
+      router.refresh();
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
-    <div className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
-      <Card>
+    <div className="grid gap-5 xl:grid-cols-[minmax(420px,1.05fr)_minmax(0,0.95fr)]">
+      <Card className="p-7 xl:p-8">
         <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[color:var(--text-soft)]">New import</p>
-        <div className="mt-5 grid gap-2 sm:grid-cols-3">
+        <div className="mt-5 grid gap-3 md:grid-cols-3">
           {modes.map((item) => {
             const Icon = item.icon;
             const active = mode === item.id;
@@ -100,11 +136,11 @@ export function ImportWorkbench({ sourceArtifacts }: { sourceArtifacts: SourceAr
                   active
                     ? "border-white/16 bg-[linear-gradient(135deg,var(--brand)_0%,color-mix(in_srgb,var(--brand)_72%,white)_100%)] text-white shadow-[0_18px_32px_rgba(91,104,255,0.24)]"
                     : "border-[color:var(--line)] bg-[color:var(--glass-bg)] text-[color:var(--text-soft)] shadow-[inset_0_1px_0_rgba(255,255,255,0.32)]"
-                }`}
+                } min-h-[112px] px-5 py-5`}
                 onClick={() => setMode(item.id)}
               >
-                <Icon className="h-4 w-4" />
-                <p className="mt-3 text-sm font-semibold">{item.label}</p>
+                <Icon className="h-5 w-5" />
+                <p className="mt-4 text-[15px] font-semibold leading-6">{item.label}</p>
               </button>
             );
           })}
@@ -114,7 +150,7 @@ export function ImportWorkbench({ sourceArtifacts }: { sourceArtifacts: SourceAr
             <Input
               value={content}
               onChange={(event) => setContent(event.target.value)}
-              placeholder="https://www.instagram.com/reel/..."
+              placeholder="Instagram, TikTok, blog, newsletter, or any travel link"
             />
           )}
           {mode === "text" && (
@@ -128,13 +164,13 @@ export function ImportWorkbench({ sourceArtifacts }: { sourceArtifacts: SourceAr
             <Textarea
               value={content}
               onChange={(event) => setContent(event.target.value)}
-              placeholder="For the secure beta backend, paste OCR text or describe what the screenshot contains. Signed uploads are the next step."
+              placeholder="Paste OCR text or describe what the screenshot contains. URL imports now try metadata, subtitles, frame OCR, and free parsing."
             />
           )}
           <Input
             value={destinationHint}
             onChange={(event) => setDestinationHint(event.target.value)}
-            placeholder="Destination hint (optional)"
+            placeholder="Destination hint (optional, but helps free geocoding)"
           />
           {status ? (
             <p
@@ -154,7 +190,7 @@ export function ImportWorkbench({ sourceArtifacts }: { sourceArtifacts: SourceAr
             className="w-full"
             variant="app"
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={loading || !trimmedContent}
           >
             {loading ? "Sending..." : "Send to Zylo"}
           </Button>

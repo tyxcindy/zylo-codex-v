@@ -87,6 +87,23 @@ Purpose:
 - prevent unsafe redirect paths
 - mask email addresses in logs
 
+### Import Analysis And Pipeline
+
+Files:
+
+- `lib/import-analysis.ts`
+- `lib/import-pipeline.ts`
+- `lib/url-metadata.ts`
+- `lib/import-logger.ts`
+
+Purpose:
+
+- normalize raw import evidence
+- score whether content looks travel-related
+- extract rule-based place seeds before or alongside Gemini
+- orchestrate URL metadata, subtitles, OCR, transcription, and geocoding stages
+- append JSONL import diagnostics to `logs/imports.jsonl`
+
 ### Audit Logging
 
 File:
@@ -185,13 +202,16 @@ Flow:
 4. ensure user profile and taste profile exist
 5. insert `source_artifacts` row
 6. insert `import_jobs` row
-7. extract candidate places with Gemini
-8. enrich with Google Places
-9. upsert destination rows
-10. upsert place rows
-11. update artifact/import job status
-12. record audit event
-13. return JSON preview data
+7. run `runImportPipeline()`
+8. optionally relabel URL imports from fetched page metadata
+9. if no candidates are found, mark the artifact/job failed and return a friendly `422`
+10. optionally fetch an Unsplash fallback image
+11. upsert destination rows
+12. upsert place rows
+13. update artifact/import job status
+14. append import diagnostics
+15. record audit event
+16. return JSON preview data
 
 Returned JSON includes:
 
@@ -201,12 +221,107 @@ Returned JSON includes:
 - provider status
 - extraction preview
 - enrichment preview
-- fallback image preview
+- image preview
+- analysis preview with travel scoring, diagnostics, and stage status
 
 Important behavior:
 
 - this route performs the whole processing flow inline
 - there is no queue worker yet
+- `runtime = "nodejs"` is required because the route depends on Node-side tooling
+- total pipeline failure returns `503`
+- valid-but-non-actionable imports return `422`
+
+### Import Pipeline Stage Details
+
+Main file:
+
+- `lib/import-pipeline.ts`
+
+Supported input types:
+
+- `url`
+- `text`
+- `image`
+
+The import route is no longer a single "send content to Gemini" flow. It uses layered evidence collection so reel links can still yield place candidates even when one source fails.
+
+#### URL imports currently attempt these reel parsing methods
+
+1. `fetchUrlMetadata()`
+   - fetches public HTML with a browser-like user agent and timeout
+   - extracts `title`, `og:title`, `description`, and `og:description`
+2. `safeYtDlpJson()`
+   - attempts `yt-dlp` JSON metadata without downloading the video
+3. `downloadSubtitles()`
+   - downloads auto or authored subtitles when available
+   - normalizes subtitle text with `subtitleToPlainText()`
+4. `downloadVideo()`
+   - downloads a temporary local video when possible
+5. `extractFrames()`
+   - uses `ffmpeg` to sample frames
+6. `performOcr()`
+   - runs OCR through `tesseract.js` on sampled frames
+7. `extractAudio()`
+   - uses `ffmpeg` to extract mono audio
+8. `tryLocalWhisperTranscript()`
+   - attempts transcription through `scripts/transcribe_audio.py`
+   - prefers `.venv/bin/python` when available
+
+#### Evidence analysis
+
+`lib/import-analysis.ts` currently provides:
+
+- `normalizeImportedEvidenceText()`
+- `subtitleToPlainText()`
+- `buildCombinedEvidenceText()`
+- `scoreTravelEvidence()`
+- `extractRuleBasedPlaceSeeds()`
+
+Important behavior:
+
+- positive and negative travel signals are scored before persistence
+- hashtags are normalized instead of dropped
+- rule-based seed extraction tries to recover place names from mixed evidence
+- Gemini refinement is additive, not the only parser
+
+#### Candidate verification order
+
+For each merged candidate seed, the pipeline currently tries:
+
+1. `lookupPlaceSummaryFree()` in `lib/providers/nominatim.ts`
+2. `lookupPlaceSummary()` in `lib/providers/google-places.ts`
+3. Gemini-only fallback when the candidate still has enough city/country context
+
+Important behavior:
+
+- generic location-only matches are rejected
+- free geocoding is attempted before paid Google lookup
+- Gemini refinement failure is non-fatal and is recorded in diagnostics
+
+#### Pipeline result shape
+
+`runImportPipeline()` returns:
+
+- `candidates`
+- `combinedText`
+- `diagnostics`
+- `failureReason`
+- `score`
+- `evidencePreview`
+- `stages`
+
+The `stages` object currently tracks:
+
+- `metadata`
+- `ytDlp`
+- `subtitles`
+- `download`
+- `frames`
+- `ocr`
+- `transcript`
+- `geocoding`
+- `geminiRefinement`
 
 ## `GET /api/imports/[id]`
 
@@ -222,6 +337,30 @@ Checks:
 
 - auth required
 - user ownership enforced via query filters
+
+## `POST /api/profile/planner-notes`
+
+File:
+
+- `app/api/profile/planner-notes/route.ts`
+
+Purpose:
+
+- persist planner notes into `profiles.planner_notes`
+
+Input:
+
+- `notes`
+
+Checks:
+
+- auth required
+- validation required
+- notes capped at 4,000 characters
+
+Important behavior:
+
+- returns `409` when the `planner_notes` migration has not been applied yet
 
 ## `POST /api/places/[id]/save-state`
 
@@ -332,6 +471,7 @@ Behavior:
 - uses `gemini-2.0-flash`
 - asks for JSON responses
 - returns empty arrays or `null` on failure
+- is now one stage inside the import pipeline, not the only extraction path
 
 ### Google Places
 
@@ -348,6 +488,23 @@ Behavior:
 - uses `places:searchText`
 - returns one place summary
 - silently returns `null` on failure
+
+### Nominatim
+
+File:
+
+- `lib/providers/nominatim.ts`
+
+Function:
+
+- `lookupPlaceSummaryFree()`
+
+Behavior:
+
+- uses public Nominatim search
+- throttles requests to stay polite to the free service
+- returns OpenStreetMap URL data when a match is usable
+- is preferred before Google Places in candidate verification
 
 ### Unsplash
 
@@ -388,5 +545,5 @@ Important behavior:
 - Import processing should eventually move to async workers.
 - Rate limiting should eventually move to a shared store like Redis or database-backed counters.
 - Provider errors are intentionally swallowed into graceful fallback behavior, so you need logs and health checks to know when enrichment silently degraded.
+- The new reel parsing flow depends on Node-side binaries and local runtime capabilities like `yt-dlp`, `ffmpeg`, OCR, and optional Whisper transcription. Not every deployment target will support every stage equally well.
 - The signed-in UI does not yet fully query the data written by these routes.
-

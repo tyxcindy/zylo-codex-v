@@ -1,5 +1,29 @@
 # Zylo Security Checklist
 
+## April 2026 Vercel Incident Response
+
+- Vercel disclosed this incident on April 20, 2026. Their bulletin says a limited subset of customers had non-sensitive environment variables exposed and recommends rotating non-sensitive secrets, reviewing activity logs, checking deployments, using Sensitive Variables, enabling 2FA, and revoking the compromised Google OAuth app if present.
+- For this repo, rotate these first if they exist in Vercel:
+  - `SUPABASE_SERVICE_ROLE_KEY`
+  - `GEMINI_API_KEY`
+  - `GOOGLE_MAPS_API_KEY`
+  - `UNSPLASH_ACCESS_KEY`
+  - `UNSPLASH_SECRET_KEY`
+  - `RESEND_API_KEY`
+- Review these, but do not treat them as the first emergency rotation target:
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+  - `NEXT_PUBLIC_APP_URL`
+- This workspace is linked to Vercel project `zylo_v1.0` via `.vercel/project.json`.
+- Add every non-public secret in Vercel as a **Sensitive Variable** instead of a plain environment variable.
+- Review Vercel project activity and deployments for anything you do not recognize, then delete suspicious deployments and rotate any tokens tied to them.
+- Check Google account or Workspace access for the IOC OAuth app ID:
+  - `110671459871-30f1spbu0hptbs60cb4vsmv79i7bbvqj.apps.googleusercontent.com`
+- Rotate Deployment Protection bypass secrets if they were enabled.
+- Enable or verify Vercel 2FA on the account that owns this project.
+- Run `npm run security:vercel-incident` from this repo for the current local inventory and follow-up checklist.
+
 ## In Code Now
 
 - Supabase SSR auth clients keep service-role credentials server-only.
@@ -56,6 +80,6 @@
 ## Deployment Notes
 
 - Deploy only over HTTPS.
-- Keep `SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY`, `GOOGLE_MAPS_API_KEY`, `UNSPLASH_SECRET_KEY`, and `RESEND_API_KEY` server-only.
+- Keep `SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY`, `GOOGLE_MAPS_API_KEY`, `UNSPLASH_ACCESS_KEY`, `UNSPLASH_SECRET_KEY`, and `RESEND_API_KEY` server-only.
 - Do not expose database service credentials to client bundles.
 - Do not allow direct public database access outside Supabase’s managed APIs and RLS rules.

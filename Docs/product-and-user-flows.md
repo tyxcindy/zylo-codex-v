@@ -48,10 +48,14 @@ Goal:
 
 Key pages:
 
+- `/onboarding`
 - `/dashboard`
 - `/import`
+- `/destinations`
+- `/destinations/[id]`
 - `/places`
 - `/map`
+- `/search`
 - `/trips`
 - `/ai`
 - `/settings`
@@ -72,6 +76,8 @@ Key pages:
   - Security posture and sample audit events.
 - `/faq`
   - Answers around sync, mobile support, and scope.
+- `/onboarding`
+  - Public onboarding route that frames manual import as the real beta workflow.
 - `/sign-in`
   - Sign in and create account entry page.
 - `/forgot-password`
@@ -85,10 +91,16 @@ Key pages:
   - Summary metrics, repeat-save radar, destination highlights.
 - `/import`
   - Main import workbench for URL, text, and image-derived inputs.
+- `/destinations`
+  - Destination grid over the saved library snapshot.
+- `/destinations/[id]`
+  - Destination detail with filtered place browsing.
 - `/places`
   - Card grid of places.
 - `/map`
   - Visual cluster map mock plus destination cards.
+- `/search`
+  - Search workspace for place name, city, tag, and category lookups.
 - `/trips`
   - Trip cards and day/stop breakdown.
 - `/ai`
@@ -107,6 +119,7 @@ Key pages:
 
 - `/api/imports`
 - `/api/imports/[id]`
+- `/api/profile/planner-notes`
 - `/api/places/[id]/save-state`
 - `/api/trips`
 - `/api/trips/[id]/generate`
@@ -146,17 +159,21 @@ Important note:
    - rate-limits the request
    - writes a `source_artifacts` row
    - writes an `import_jobs` row
-   - asks Gemini for place extraction
-   - optionally enriches places with Google Places
+   - runs a multi-stage evidence pipeline
+   - for reel links, tries metadata fetch, `yt-dlp`, subtitles, frame OCR, and audio transcription
+   - scores whether the content looks travel-related enough to parse
+   - extracts rule-based place seeds before Gemini refinement
+   - verifies candidates through Nominatim first, then Google Places
    - optionally looks up a fallback Unsplash image
    - upserts destinations and places
    - updates artifact and import job status
+   - appends import diagnostics
    - writes an audit event
 6. UI displays resulting status text.
 
 Important note:
 
-- The import UI looks live and talks to the real API, but the right-side queue currently renders demo seed data rather than refetching from Supabase.
+- The import UI looks live and talks to the real API, and the right-side `Latest uploads` panel now reflects recent source artifacts from the user snapshot.
 
 ## 3. Browse Places
 
@@ -222,6 +239,10 @@ Fallback behavior:
 - Secure auth and recovery flows.
 - Beta-safe provider fallback behavior.
 - User-owned data boundaries.
+- Manual-import-first onboarding.
+- Search over saved places.
+- Destination browsing routes.
+- Planner note persistence on the trips surface.
 
 ## Product Promises That Are Still Mostly Narrative
 
@@ -229,17 +250,15 @@ Fallback behavior:
 - Direct TikTok sync.
 - Robust screenshot upload pipeline.
 - Truly live map experience.
-- Full search experience.
 - Sophisticated trip generation.
 - Deep collaborative or shareable planning.
 
 ## Known Product Gaps To Track
 
-- `/search` is linked in navigation but missing.
 - Several pages look production-ready but still render seeded data.
 - Settings page reports provider configuration presence, not provider health, quota, or billing.
-- Import results are not currently reflected across all UI surfaces after a successful POST.
-- There is no full live destination/places query layer on the signed-in pages yet.
+- Import results are reflected in the import workspace and snapshot-driven routes, but not every signed-in surface is fully live yet.
+- Trip composition is still heavily demo-data-driven.
 
 ## What Success Looks Like For The Next Product Phase
 
@@ -249,7 +268,6 @@ That means:
 
 1. replace seeded dashboard, places, map, and trips views with authenticated Supabase queries
 2. complete image upload and OCR ingestion
-3. implement search
+3. deepen destination and search flows until they are fully live across all app surfaces
 4. make trip generation actually itinerary-aware
 5. add async job processing for imports
-

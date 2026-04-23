@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { requireApiUser } from "@/lib/auth";
-import { recordAuditEvent } from "@/lib/audit";
+import { updatePlaceSaveState } from "@/lib/place-save-state";
 import { getClientIp } from "@/lib/request";
 import { applyRateLimit } from "@/lib/security";
 import { parseWithSchema, saveStateSchema } from "@/lib/validation";
@@ -30,29 +30,18 @@ export async function POST(
     return NextResponse.json({ error: "Rate limit exceeded." }, { status: 429 });
   }
 
-  const updates: Record<string, boolean> = {};
-  if (typeof parsed.data.isVisited === "boolean") updates.is_visited = parsed.data.isVisited;
-  if (typeof parsed.data.isInTrip === "boolean") updates.is_in_trip = parsed.data.isInTrip;
-
-  const { data: place, error } = await supabase
-    .from("places")
-    .update(updates)
-    .eq("id", id)
-    .eq("user_id", user.id)
-    .select("id, name, city, country, category, address, description, latitude, longitude, times_seen, source_count, is_visited, is_in_trip, tags")
-    .single();
-
-  if (error || !place) {
-    return NextResponse.json({ error: "Place not found." }, { status: 404 });
-  }
-
-  await recordAuditEvent({
+  const result = await updatePlaceSaveState({
+    supabase,
     userId: user.id,
-    eventType: "api",
-    message: "Place save state updated",
-    severity: "info",
-    metadata: { ip, placeId: id }
+    placeId: id,
+    ip,
+    isVisited: parsed.data.isVisited,
+    isInTrip: parsed.data.isInTrip
   });
 
-  return NextResponse.json({ place });
+  if (!result.ok) {
+    return NextResponse.json({ error: result.error }, { status: result.status });
+  }
+
+  return NextResponse.json({ place: result.place });
 }

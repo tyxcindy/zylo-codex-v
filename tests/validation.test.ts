@@ -14,10 +14,21 @@ describe("importSchema", () => {
     expect(result.success).toBe(true);
   });
 
+  it("accepts an empty destination hint", () => {
+    const result = parseWithSchema(importSchema, {
+      type: "url",
+      content: "https://example.com/tokyo-food-reel",
+      destinationHint: ""
+    });
+
+    expect(result.success).toBe(true);
+  });
+
   it("rejects content that is too short", () => {
     const result = parseWithSchema(importSchema, {
       type: "text",
-      content: "short"
+      content: "short",
+      destinationHint: "Kyoto"
     });
 
     expect(result.success).toBe(false);
@@ -29,7 +40,8 @@ describe("importSchema", () => {
   it("rejects unsafe local URLs", () => {
     const result = parseWithSchema(importSchema, {
       type: "url",
-      content: "http://localhost:3000/private"
+      content: "http://localhost:3000/private",
+      destinationHint: "Tokyo"
     });
 
     expect(result.success).toBe(false);

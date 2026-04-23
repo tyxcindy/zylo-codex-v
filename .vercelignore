@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+.vercel
+.venv
+coverage
+playwright-report
+test-results
+*.log
+Docs
+tests
+app/test

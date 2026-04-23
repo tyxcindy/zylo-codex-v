@@ -1,5 +1,4 @@
-import { DestinationsGrid } from "@/components/app/destinations-grid";
-import { SectionIntro } from "@/components/app/section-intro";
+import { DestinationsGallery } from "@/components/app/destinations-gallery";
 import { requirePageUser } from "@/lib/auth";
 import { getUserLibrarySnapshot } from "@/lib/app-data";
 
@@ -9,12 +8,7 @@ export default async function DestinationsPage() {
 
   return (
     <section>
-      <SectionIntro
-        eyebrow="Destinations"
-        title="Your travel saves, grouped by city first."
-        description="Zylo starts with destinations, then organizes the actual spots inside each one so trip planning feels like moving forward instead of sorting a pile."
-      />
-      <DestinationsGrid destinations={destinations} />
+      <DestinationsGallery destinations={destinations} />
     </section>
   );
 }

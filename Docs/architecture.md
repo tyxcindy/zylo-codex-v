@@ -85,7 +85,11 @@ Files:
 
 - `app/api/*`
 - `app/*/actions.ts`
+- `lib/app-data.ts`
 - `lib/database.ts`
+- `lib/import-analysis.ts`
+- `lib/import-logger.ts`
+- `lib/import-pipeline.ts`
 - `lib/validation.ts`
 - `lib/security.ts`
 - `lib/request.ts`
@@ -96,6 +100,9 @@ Responsibilities:
 - Validate and sanitize requests.
 - Apply in-memory rate limits.
 - Fetch current user from the Supabase session.
+- Build user-scoped snapshot data for server-rendered app pages.
+- Analyze reel evidence before provider calls.
+- Orchestrate the multi-stage import pipeline and diagnostics logging.
 - Insert and update database rows.
 - Record audit events.
 - Coordinate provider calls.
@@ -106,10 +113,14 @@ Files:
 
 - `lib/providers/gemini.ts`
 - `lib/providers/google-places.ts`
+- `lib/providers/nominatim.ts`
 - `lib/providers/unsplash.ts`
+- `lib/url-metadata.ts`
 
 Responsibilities:
 
+- Read public metadata from travel URLs.
+- Verify candidates through a free geocoding path before paid provider lookup.
 - Extract place candidates from imported content.
 - Enrich extracted places with verified address and coordinates.
 - Retrieve fallback destination imagery.
@@ -169,28 +180,33 @@ Responsibilities:
   - `/pricing`
   - `/how-it-works`
   - `/security`
-  - `/faq`
-  - `/sign-in`
-  - `/forgot-password`
-  - `/update-password`
+- `/faq`
+- `/onboarding`
+- `/sign-in`
+- `/forgot-password`
+- `/update-password`
 - Auth callback route:
   - `/auth/confirm`
 - API routes:
-  - `/api/health`
-  - `/api/imports`
-  - `/api/imports/[id]`
-  - `/api/places/[id]/save-state`
-  - `/api/trips`
-  - `/api/trips/[id]/generate`
-  - `/api/ai/chat`
+- `/api/health`
+- `/api/imports`
+- `/api/imports/[id]`
+- `/api/profile/planner-notes`
+- `/api/places/[id]/save-state`
+- `/api/trips`
+- `/api/trips/[id]/generate`
+- `/api/ai/chat`
 - Protected app group:
-  - `/dashboard`
-  - `/import`
-  - `/places`
-  - `/map`
-  - `/trips`
-  - `/ai`
-  - `/settings`
+- `/dashboard`
+- `/import`
+- `/destinations`
+- `/destinations/[id]`
+- `/places`
+- `/map`
+- `/search`
+- `/trips`
+- `/ai`
+- `/settings`
 
 ### `components/`
 
@@ -203,16 +219,20 @@ Responsibilities:
 ### `lib/`
 
 - `auth.ts`: current user helpers.
+- `app-data.ts`: server-side library snapshot loader for signed-in routes.
 - `audit.ts`: audit logging.
 - `database.ts`: helper functions for upserting profiles, destinations, and places.
 - `domain.ts`: TypeScript domain contracts.
 - `env.ts`: environment variable normalization.
+- `import-analysis.ts`: evidence normalization, travel scoring, and rule-based place seeding.
+- `import-logger.ts`: append-only JSONL import diagnostics.
+- `import-pipeline.ts`: multi-stage import orchestration for URL, text, and screenshot-text workflows.
 - `provider-status.ts`: availability summary for third-party services.
 - `request.ts`: IP, redirect, and app URL utilities.
 - `security.ts`: rate limiting and input safety utilities.
 - `validation.ts`: Zod schemas.
 - `supabase/`: browser, server, admin, and middleware clients.
-- `providers/`: Gemini, Google Places, Unsplash.
+- `providers/`: Gemini, Google Places, Nominatim, Unsplash.
 
 ### `db/`
 
@@ -281,6 +301,25 @@ Purpose:
 
 - support real persistence and secure per-user ownership.
 
+### Snapshot-Loaded Route Data
+
+File:
+
+- `lib/app-data.ts`
+
+Used by:
+
+- dashboard
+- import
+- map
+- destinations
+- search
+- settings
+
+Purpose:
+
+- load a user-scoped library snapshot of destinations, places, recent source artifacts, and profile data including `planner_notes`
+
 ## Architectural Strengths
 
 - Clear split between public and protected surfaces.
@@ -295,10 +334,10 @@ Purpose:
 - In-memory rate limiting is process-local and resets on restart.
 - Several visible app pages still read demo data instead of live records.
 - Auth logic exists in both server actions and client-side Supabase form handlers, which creates duplication.
-- The navigation includes `/search`, but that route is not implemented.
 - `db/schema.ts` is not the real schema and should not be used as the source of truth.
 - Import processing is synchronous inside the request instead of background-job-driven.
 - Image import is still text-based placeholder behavior, not a real upload pipeline.
+- The import pipeline now does materially more work inside a single request: metadata fetch, `yt-dlp`, subtitle parsing, OCR, transcription, free geocoding, paid enrichment, and persistence all happen before the response returns.
 
 ## What To Preserve If Refactoring
 

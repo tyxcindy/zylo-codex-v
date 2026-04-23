@@ -60,11 +60,13 @@ Read these if you are modifying the repo that exists today:
 - Optional providers:
   - Gemini for extraction and AI concierge responses.
   - Google Places for place enrichment.
+  - Nominatim for free place verification before paid Google lookup.
   - Unsplash for fallback imagery.
   - Resend is installed but not central to the current auth flow.
 - State strategy:
   - Many screens still render seeded demo data from `lib/data.ts`.
   - Core API flows write to Supabase.
+  - Several signed-in routes now hydrate through `lib/app-data.ts`.
   - The repo is part real product, part polished beta shell.
 
 ## What Is Real Versus Placeholder
@@ -74,19 +76,22 @@ Implemented enough to work end to end:
 - Public pages and signed-in pages render.
 - Protected routes redirect through middleware.
 - Supabase sign in, sign up, confirm, password reset, and password update flows exist.
-- Import POST endpoint validates input, creates source artifacts, tries Gemini extraction, enriches with Google Places, optionally looks up Unsplash imagery, and writes records to Supabase.
+- Public onboarding exists at `/onboarding`.
+- Search exists at `/search`.
+- Destination list and detail routes exist.
+- Import POST endpoint validates input, creates source artifacts, runs a multi-stage reel parsing pipeline, enriches candidates, logs diagnostics, and writes records to Supabase.
 - Trip creation and basic trip generation endpoints exist.
 - AI chat endpoint exists and uses taste profile plus optional trip context.
+- Planner notes can be saved to the user profile.
 - SQL migration defines most important tables and row-level ownership rules.
 
 Still intentionally shallow or placeholder:
 
-- A number of authenticated screens read demo data instead of live queries.
+- A number of authenticated screens still read demo data instead of live queries.
 - The trip generation route only creates a single day stub and marks the trip ready.
 - AI chat has a fallback text response when Gemini is unavailable.
-- There is a mobile/app navigation entry for `/search`, but that route is not implemented.
 - Direct Instagram and TikTok sync are roadmap copy, not launch features.
-- Uploaded image handling is not yet a true storage pipeline; the import UI currently asks for OCR text or a description.
+- Uploaded image handling is not yet a true binary upload pipeline; the import UI currently asks for OCR text or a description.
 
 ## Folder Guide
 
@@ -111,7 +116,7 @@ Still intentionally shallow or placeholder:
 4. Test sign up, email confirmation, password reset, import creation, and AI chat.
 5. Decide whether the next milestone is:
    - live data replacing seeded demo screens, or
-   - stronger import pipeline and media upload support.
+   - turning the new import pipeline into a more durable async media-processing system.
 
 ## Recommended First Tasks For An AI Agent
 
@@ -136,3 +141,4 @@ These are the places a new engineer or agent is most likely to get burned:
 - The original brief wants `GOOGLE_PLACES_API_KEY`; the repo currently expects `GOOGLE_MAPS_API_KEY`.
 - The original brief treats manual import as a permanent first-class feature and Phase 2 OAuth as scaffold-only; the current repo already hints at roadmap connections but does not implement real sync.
 - The public `figma.site` artifact is still `Zylo` branded, while the original brief specifies `Wandr`.
+- The import docs must be read with `lib/import-pipeline.ts` in mind, not the older "Gemini-only extraction" mental model. URL imports now attempt metadata, `yt-dlp`, subtitles, frame OCR, transcription, free geocoding, and then Gemini refinement.

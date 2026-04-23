@@ -116,13 +116,18 @@ Implement `/api/imports` with this exact order:
 4. ensure profile exists
 5. create source artifact
 6. create import job
-7. extract places with Gemini
-8. enrich with Google Places
-9. optionally fetch Unsplash image
-10. upsert destination
-11. upsert place
-12. complete job status
-13. record audit event
+7. run multi-stage evidence analysis
+8. for URL imports, attempt metadata fetch, `yt-dlp`, subtitles, frame OCR, and transcript extraction
+9. score whether the import looks travel-related
+10. extract rule-based place seeds
+11. optionally refine with Gemini
+12. verify candidates through Nominatim first, then Google Places
+13. optionally fetch Unsplash image
+14. upsert destination
+15. upsert place
+16. complete job status
+17. append import diagnostics log
+18. record audit event
 
 Do not skip the deduplication logic on places. It is part of the product value.
 
@@ -132,8 +137,10 @@ Create pages for:
 
 - dashboard
 - import
+- destinations
 - places
 - map
+- search
 - trips
 - ai
 - settings
@@ -183,6 +190,7 @@ Then add:
 - API route tests
 - middleware tests
 - auth flow tests
+- import pipeline stage tests
 
 ## File-By-File Recreation Guide
 
@@ -229,13 +237,18 @@ Create:
 Create:
 
 - `lib/auth.ts`
+- `lib/app-data.ts`
 - `lib/audit.ts`
 - `lib/database.ts`
 - `lib/domain.ts`
 - `lib/env.ts`
+- `lib/import-analysis.ts`
+- `lib/import-logger.ts`
+- `lib/import-pipeline.ts`
 - `lib/provider-status.ts`
 - `lib/request.ts`
 - `lib/security.ts`
+- `lib/url-metadata.ts`
 - `lib/validation.ts`
 - `lib/supabase/*`
 - `lib/providers/*`
@@ -258,7 +271,17 @@ Right:
 
 - use it only as a temporary UX scaffold and copy guide
 
-### Mistake 2. Shipping fake sync
+### Mistake 2. Modeling imports as "Gemini parses a caption"
+
+Wrong:
+
+- assume reel parsing is one provider call
+
+Right:
+
+- build evidence collection in layers so metadata, subtitles, OCR, transcription, rule-based extraction, free geocoding, and Gemini refinement can each contribute
+
+### Mistake 3. Shipping fake sync
 
 Wrong:
 
@@ -268,7 +291,7 @@ Right:
 
 - keep imports real and label direct sync as roadmap
 
-### Mistake 3. Flattening the design
+### Mistake 4. Flattening the design
 
 Wrong:
 
@@ -278,7 +301,7 @@ Right:
 
 - preserve a strong marketing identity and a distinct app shell
 
-### Mistake 4. Skipping RLS
+### Mistake 5. Skipping RLS
 
 Wrong:
 
@@ -288,7 +311,7 @@ Right:
 
 - enforce ownership in SQL
 
-### Mistake 5. Making providers mandatory
+### Mistake 6. Making providers mandatory
 
 Wrong:
 

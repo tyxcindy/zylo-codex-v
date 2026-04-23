@@ -26,6 +26,7 @@ Fields of interest:
 - email
 - display name
 - home city
+- planner notes
 
 ### Taste Profile
 
@@ -124,6 +125,7 @@ Important fields:
 - `email`
 - `display_name`
 - `home_city`
+- `planner_notes`
 - timestamps
 
 ## `taste_profiles`
@@ -323,6 +325,22 @@ When a new auth user is created:
 
 The application layer also includes `ensureProfileForUser()` as a safety net.
 
+## Snapshot Mapping Layer
+
+File:
+
+- `lib/app-data.ts`
+
+Purpose:
+
+- map Supabase rows into frontend-facing `Destination`, `Place`, `SourceArtifact`, and `UserProfileSummary` objects
+
+Important behavior:
+
+- joins recent `import_jobs` status and error messages into `sourceArtifacts`
+- exposes `plannerNotes` from `profiles.planner_notes`
+- still falls back to demo trips because the live trip query layer is not complete yet
+
 ## Row-Level Security
 
 RLS is enabled for all key public tables.
@@ -353,4 +371,3 @@ Examples:
 3. add a real query layer for dashboard aggregates
 4. add search indexes or a search service
 5. separate sync jobs from request-response imports
-

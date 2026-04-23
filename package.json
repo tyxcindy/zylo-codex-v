@@ -3,10 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node scripts/dev-server.mjs",
+    "dev:reset": "node scripts/kill-port.mjs 3000 && npm run dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3000",
+    "port:3000:kill": "node scripts/kill-port.mjs 3000",
+    "imports:tail": "node scripts/imports-tail.mjs",
+    "imports:sweep": "tsx scripts/import-sweep.ts",
+    "imports:benchmark": "tsx scripts/import-benchmark.ts",
     "lint": "next lint",
+    "security:vercel-incident": "node scripts/vercel-incident-audit.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test"
@@ -20,15 +26,19 @@
     "@tanstack/react-query": "^5.59.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "ffmpeg-static": "^5.3.0",
     "framer-motion": "^11.11.9",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.454.0",
+    "maplibre-gl": "^5.23.0",
     "next": "^15.0.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.1",
     "resend": "^6.12.0",
     "tailwind-merge": "^2.5.4",
+    "tesseract.js": "^7.0.0",
+    "yt-dlp-exec": "^1.0.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -46,6 +56,7 @@
     "jsdom": "^25.0.1",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.14",
+    "tsx": "^4.21.0",
     "typescript": "^5.6.3",
     "vitest": "^2.1.4"
   }

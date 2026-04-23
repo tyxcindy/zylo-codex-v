@@ -6,21 +6,9 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { getApiErrorMessage } from "@/lib/client/api";
+import { signUpWithApi } from "@/lib/client/auth-sign-up";
 import { createClient } from "@/lib/supabase/client";
-
-function getAppUrl() {
-  const explicitUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
-
-  if (explicitUrl) {
-    return explicitUrl.replace(/\/$/, "");
-  }
-
-  if (typeof window !== "undefined") {
-    return window.location.origin;
-  }
-
-  return "";
-}
 
 function withMessage(pathname: string, key: "error" | "message", value: string, next?: string) {
   const params = new URLSearchParams();
@@ -138,28 +126,14 @@ export function SignInPanels({
     clearMessages();
 
     try {
-      const supabase = createClient();
-      const appUrl = getAppUrl();
-      const { data, error } = await supabase.auth.signUp({
-        email: signUpEmail.trim().toLowerCase(),
-        password: signUpPassword,
-        options: {
-          emailRedirectTo: `${appUrl}/auth/confirm?next=/dashboard`,
-          data: {
-            display_name: signUpDisplayName.trim(),
-            home_city: ""
-          }
-        }
+      const payload = await signUpWithApi({
+        displayName: signUpDisplayName,
+        email: signUpEmail,
+        password: signUpPassword
       });
-
-      if (error) {
-        replaceMessage("error", getErrorMessage(error, "Unable to create account."));
-        return;
-      }
-
-      const nextMessage = data.user?.email
-        ? `Account created for ${data.user.email}. Check your email to verify your address before signing in.`
-        : "Account created. Check your email to verify your address before signing in.";
+      const nextMessage =
+        payload.message ||
+        "Account created. Check your email to verify your address before signing in.";
 
       setError("");
       setMessage(nextMessage);
@@ -170,7 +144,13 @@ export function SignInPanels({
         router.replace(withMessage(pathname, "message", nextMessage, next));
       });
     } catch (clientError) {
-      replaceMessage("error", getErrorMessage(clientError, "Unable to create account."));
+      replaceMessage(
+        "error",
+        getErrorMessage(
+          new Error(getApiErrorMessage(clientError, "Unable to create account.")),
+          "Unable to create account."
+        )
+      );
     } finally {
       setSignUpPending(false);
     }

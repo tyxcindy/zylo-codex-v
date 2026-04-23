@@ -1,0 +1,494 @@
+[
+  {
+    "id": "shenzhen-baimei-stone",
+    "sourceUrl": "https://www.instagram.com/p/DQRR-UjCWlw/",
+    "destinationHint": "Shenzhen",
+    "expectedPlaces": [
+      {
+        "name": "Baimei Stone",
+        "acceptableCategories": ["activities", "photo spots"],
+        "address": "Baimei Stone, Meilin Mountain, Futian, Shenzhen"
+      }
+    ]
+  },
+  {
+    "id": "hangzhou-omg-heartbeat-park",
+    "sourceUrl": "https://www.instagram.com/p/DL6EwqNPH5d/",
+    "destinationHint": "Hangzhou",
+    "expectedPlaces": [
+      {
+        "name": "OMG Heartbeat Park",
+        "acceptableCategories": ["activities"],
+        "address": "Chuiyun Tongtian River Scenic Area, Yaolin Town, Tonglu County, Hangzhou"
+      }
+    ]
+  },
+  {
+    "id": "guangdong-xinghua-wuji-beef-hotpot",
+    "sourceUrl": "https://www.instagram.com/p/DWHIBcDh_PB/",
+    "destinationHint": "Guangdong",
+    "expectedPlaces": [
+      {
+        "name": "Xinghua Wuji Beef Hotpot",
+        "acceptableCategories": ["restaurants"],
+        "address": "Xinghua Wuji Beef Hotpot, Shantou, Guangdong"
+      }
+    ]
+  },
+  {
+    "id": "hong-kong-crab-master-8",
+    "sourceUrl": "https://www.instagram.com/p/DQoxEeJgbUa/",
+    "destinationHint": "Hong Kong",
+    "expectedPlaces": [
+      {
+        "name": "Crab Master 8",
+        "acceptableCategories": ["restaurants"],
+        "address": "Shop 5, G/F, Dorfu Court, 5-6 Hau Fook Street, Tsim Sha Tsui"
+      }
+    ]
+  },
+  {
+    "id": "hong-kong-pak-lap-tsai",
+    "sourceUrl": "https://www.instagram.com/p/DDb0HSjvANf/",
+    "destinationHint": "Hong Kong",
+    "expectedPlaces": [
+      {
+        "name": "Pak Lap Tsai",
+        "acceptableCategories": ["activities", "photo spots"],
+        "address": "Sai Kung East Country Park, Hong Kong"
+      }
+    ]
+  },
+  {
+    "id": "hong-kong-bolo-bolo",
+    "sourceUrl": "https://www.instagram.com/p/DHlYNnYhU1g/",
+    "destinationHint": "Hong Kong",
+    "expectedPlaces": [
+      {
+        "name": "Bolo Bolo",
+        "acceptableCategories": ["restaurants"],
+        "address": "8 Wo On Lane, Central, Hong Kong"
+      }
+    ]
+  },
+  {
+    "id": "hong-kong-trails",
+    "sourceUrl": "https://www.instagram.com/p/DHzqLrWhLgo/",
+    "destinationHint": "Hong Kong",
+    "expectedPlaces": [
+      {
+        "name": "Aberdeen Reservoir",
+        "acceptableCategories": ["activities"],
+        "address": "Aberdeen Country Park, Hong Kong Island"
+      },
+      {
+        "name": "Tai Tam Country Park",
+        "acceptableCategories": ["activities"],
+        "address": "Hong Kong Island"
+      },
+      {
+        "name": "Little Hawaii Trail",
+        "acceptableCategories": ["activities"],
+        "address": "SaiKung District"
+      }
+    ]
+  },
+  {
+    "id": "taiwan-daqiu-island",
+    "sourceUrl": "https://www.instagram.com/p/DL2MYmtSGJ3/",
+    "destinationHint": "Taiwan",
+    "expectedPlaces": [
+      {
+        "name": "Matsu's Daqiu Island",
+        "aliases": ["Daqiu Island"],
+        "acceptableCategories": ["activities", "photo spots"],
+        "address": "North of Beigan Island, Lianjiang County (Matsu), Taiwan"
+      }
+    ]
+  },
+  {
+    "id": "new-hampshire-snowmobiling",
+    "sourceUrl": "https://www.instagram.com/p/DUMBC48kpND/",
+    "destinationHint": "New Hampshire",
+    "expectedPlaces": [
+      {
+        "name": "Northern Extremes Snowmobiling",
+        "acceptableCategories": ["activities"],
+        "address": "Bartlett, New Hampshire"
+      }
+    ]
+  },
+  {
+    "id": "shanghai-romance-park",
+    "sourceUrl": "https://www.instagram.com/p/DQ35anWEuNj/",
+    "destinationHint": "Shanghai",
+    "expectedPlaces": [
+      {
+        "name": "Shanghai Romance Park",
+        "acceptableCategories": ["activities"],
+        "address": "No. 1750 World Expo Avenue, Pudong, Shanghai"
+      }
+    ]
+  },
+  {
+    "id": "chiang-mai-sticky-falls",
+    "sourceUrl": "https://www.instagram.com/p/DOjIm54EZZg/",
+    "destinationHint": "Bangkok",
+    "expectedPlaces": [
+      {
+        "name": "Bua Thong (Sticky Falls)",
+        "aliases": ["Bua Thong Sticky Falls", "Sticky Falls"],
+        "acceptableCategories": ["activities"],
+        "address": "Bua Thong, Chiang Mai, Bangkok, Thailand"
+      }
+    ]
+  },
+  {
+    "id": "chongqing-stays",
+    "sourceUrl": "https://www.instagram.com/p/DHL3XHXSbUv/",
+    "destinationHint": "Chong Qing",
+    "expectedPlaces": [
+      {
+        "name": "Chongqing Indition High Altitude Hotel",
+        "acceptableCategories": ["hotels"],
+        "address": "38F, XIN HUA ROAD 1, Chongqing, China"
+      },
+      {
+        "name": "ISEYA Hotel - Chongqing Jiefangbei Flagship",
+        "aliases": ["ISEYA Hotel Chongqing Jiefangbei Flagship"],
+        "acceptableCategories": ["hotels"],
+        "address": "28 Minquan Rd, Yingli International Finance Centre, Yuzhong District, Chongqing, China, 400010"
+      }
+    ]
+  },
+  {
+    "id": "nyc-genesis-house",
+    "sourceUrl": "https://www.instagram.com/p/DKCmINyuIfS/",
+    "destinationHint": "New York City",
+    "expectedPlaces": [
+      {
+        "name": "Korean Forest (Genesis House)",
+        "aliases": ["Genesis House", "Korean Forest"],
+        "acceptableCategories": ["activities", "photo spots"],
+        "address": "40A 10th Ave, New York, NY 10014"
+      }
+    ]
+  },
+  {
+    "id": "paris-cultural-spots",
+    "sourceUrl": "https://www.instagram.com/p/DIROk2nJzRe/",
+    "destinationHint": "Paris",
+    "expectedPlaces": [
+      {
+        "name": "Petit Palais",
+        "acceptableCategories": ["activities"]
+      },
+      {
+        "name": "National Archives Museum",
+        "aliases": ["Musee des Archives Nationales", "Musee Carnavalet?"],
+        "acceptableCategories": ["activities"]
+      },
+      {
+        "name": "Grand Mosque",
+        "aliases": ["Grand Mosque of Paris"],
+        "acceptableCategories": ["activities", "photo spots"]
+      },
+      {
+        "name": "Carnavalet Museum",
+        "aliases": ["Musee Carnavalet"],
+        "acceptableCategories": ["activities"]
+      },
+      {
+        "name": "Buren's Columns",
+        "aliases": ["Colonnes de Buren", "Les Deux Plateaux"],
+        "acceptableCategories": ["activities", "photo spots"]
+      }
+    ]
+  },
+  {
+    "id": "germany-partnach-gorge",
+    "sourceUrl": "https://www.instagram.com/p/DIROk2nJzRe/",
+    "destinationHint": "Germany",
+    "expectedPlaces": [
+      {
+        "name": "Partnach Gorge",
+        "acceptableCategories": ["activities"]
+      }
+    ]
+  },
+  {
+    "id": "italy-destination-roundup",
+    "sourceUrl": "https://www.instagram.com/p/DHi0Vywsn7Z/",
+    "destinationHint": "Italy",
+    "expectedPlaces": [
+      {
+        "name": "Amalfi Coast",
+        "acceptableCategories": ["activities", "photo spots"]
+      },
+      {
+        "name": "Rome",
+        "acceptableCategories": ["activities"]
+      },
+      {
+        "name": "Cinque Terre",
+        "acceptableCategories": ["activities", "photo spots"]
+      },
+      {
+        "name": "Venice",
+        "acceptableCategories": ["activities", "photo spots"]
+      },
+      {
+        "name": "Sardinia",
+        "acceptableCategories": ["activities", "photo spots"]
+      },
+      {
+        "name": "Dolomites",
+        "acceptableCategories": ["activities", "photo spots"]
+      }
+    ]
+  },
+  {
+    "id": "armenia-roundup",
+    "sourceUrl": "http://instagram.com/p/C4snVMnN8At/",
+    "destinationHint": "Armenia",
+    "expectedPlaces": [
+      {
+        "name": "Cascade Yerevan",
+        "aliases": ["Yerevan Cascade", "Cascade Complex"],
+        "acceptableCategories": ["activities", "photo spots"]
+      },
+      {
+        "name": "Monastery Srvegh",
+        "aliases": ["St. Sargis Church of Bjni", "Srvegh Monastery"],
+        "acceptableCategories": ["activities", "photo spots"]
+      },
+      {
+        "name": "Monastery Horomayr",
+        "aliases": ["Horomayr Monastery"],
+        "acceptableCategories": ["activities", "photo spots"]
+      }
+    ]
+  },
+  {
+    "id": "russia-roundup",
+    "sourceUrl": "https://www.instagram.com/p/C0zyG43L5Zl/",
+    "destinationHint": "Russia",
+    "expectedPlaces": [
+      {
+        "name": "Baykal",
+        "aliases": ["Lake Baikal"],
+        "acceptableCategories": ["activities", "photo spots"]
+      },
+      {
+        "name": "Red Square",
+        "acceptableCategories": ["activities", "photo spots"]
+      },
+      {
+        "name": "Moscow City",
+        "aliases": ["Moscow-City"],
+        "acceptableCategories": ["activities", "photo spots"]
+      }
+    ]
+  },
+  {
+    "id": "egypt-valley-of-the-kings",
+    "sourceUrl": "https://www.instagram.com/p/DLpaN9uu3l2/",
+    "destinationHint": "Egypt",
+    "expectedPlaces": [
+      {
+        "name": "Valley of the Kings",
+        "acceptableCategories": ["activities", "photo spots"]
+      }
+    ]
+  },
+  {
+    "id": "egypt-tawila-island",
+    "sourceUrl": "https://www.instagram.com/p/C_Q92s5JfhO/",
+    "destinationHint": "Egypt",
+    "expectedPlaces": [
+      {
+        "name": "Tawila Island Resort",
+        "aliases": ["Tawila Island"],
+        "acceptableCategories": ["activities", "photo spots"],
+        "address": "El Gouna - Hurghada, Red Sea, Egypt"
+      }
+    ]
+  },
+  {
+    "id": "zimbabwe-roundup",
+    "sourceUrl": "https://www.instagram.com/p/C5ddCCfiTkf/",
+    "destinationHint": "Zimbabwe",
+    "expectedPlaces": [
+      { "name": "Victoria Falls", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Lake Kariba", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Mana Pools", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Nyanga", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Gonarezhou", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Matopos", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Vumba", "acceptableCategories": ["activities", "photo spots"] }
+    ]
+  },
+  {
+    "id": "montenegro-roundup",
+    "sourceUrl": "https://www.instagram.com/p/DVnyICOk-ay/",
+    "destinationHint": "Montenegro",
+    "expectedPlaces": [
+      {
+        "name": "Bay of Kotor",
+        "aliases": ["Kotor Bay", "Boka Bay"],
+        "acceptableCategories": ["activities", "photo spots"],
+        "address": "Kotor, Perast, Our Lady of the Rocks"
+      },
+      {
+        "name": "Budva - Old town",
+        "aliases": ["Old Town Budva", "Budva Old Town"],
+        "acceptableCategories": ["activities", "photo spots"],
+        "address": "Adriatic Sea, South of Montenegro"
+      },
+      {
+        "name": "Lovcen National Park",
+        "aliases": ["Lovćen National Park"],
+        "acceptableCategories": ["activities", "photo spots"],
+        "address": "Kotor"
+      },
+      {
+        "name": "Ostrog Monastery",
+        "acceptableCategories": ["activities", "photo spots"],
+        "address": "Central Montenegro"
+      },
+      {
+        "name": "Durmitor National Park",
+        "aliases": ["Black Lake", "Tara Bridge", "Tara Canyon"],
+        "acceptableCategories": ["activities", "photo spots"],
+        "address": "North of Montenegro"
+      }
+    ]
+  },
+  {
+    "id": "puglia-roundup",
+    "sourceUrl": "https://www.instagram.com/p/DVTvCIAEXu7/",
+    "destinationHint": "Puglia, Italy",
+    "expectedPlaces": [
+      {
+        "name": "Grotta Palazzese",
+        "acceptableCategories": ["restaurants"]
+      },
+      {
+        "name": "Alberobello",
+        "acceptableCategories": ["activities", "photo spots"]
+      },
+      {
+        "name": "Matera",
+        "acceptableCategories": ["activities", "photo spots"]
+      },
+      {
+        "name": "Polignano a Mare",
+        "acceptableCategories": ["activities"]
+      },
+      {
+        "name": "Monopoli",
+        "acceptableCategories": ["activities"]
+      },
+      {
+        "name": "Torre Canne",
+        "acceptableCategories": ["activities"]
+      }
+    ]
+  },
+  {
+    "id": "vietnam-roundup",
+    "sourceUrl": "https://www.instagram.com/p/DTm7t51Elh_/",
+    "destinationHint": "Vietnam",
+    "expectedPlaces": [
+      { "name": "Hanoi", "acceptableCategories": ["activities"] },
+      { "name": "Sapa", "acceptableCategories": ["activities"] },
+      { "name": "Ha Giang Loop", "acceptableCategories": ["activities"] },
+      { "name": "Ancient village", "acceptableCategories": ["activities"] }
+    ]
+  },
+  {
+    "id": "iceland-roundup-1",
+    "sourceUrl": "https://www.instagram.com/p/C9aauUdMC01/",
+    "destinationHint": "Iceland",
+    "expectedPlaces": [
+      { "name": "Skogafoss", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Kirkjufell", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Seljalandsfoss", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Stokknes", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Mulagljufur Canyon", "aliases": ["Mulagljufur"], "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Dyrholaey Lighthouse", "aliases": ["Dyrhólaey Lighthouse", "Dyrholaey"], "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Reynisfjara", "acceptableCategories": ["activities", "photo spots"] }
+    ]
+  },
+  {
+    "id": "iceland-roundup-2",
+    "sourceUrl": "https://www.instagram.com/p/CkupxFTjw0s/",
+    "destinationHint": "Iceland",
+    "expectedPlaces": [
+      { "name": "Seljalandsfoss", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Diamond Beach", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Geysir", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Reynisfjara Beach", "aliases": ["Reynisfjara"], "acceptableCategories": ["activities", "photo spots"] }
+    ]
+  },
+  {
+    "id": "los-angeles-roundup",
+    "sourceUrl": "https://www.instagram.com/p/DSiQlupjGUj/",
+    "destinationHint": "Los Angeles",
+    "expectedPlaces": [
+      { "name": "Venice Beach", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Griffith Observatory", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Beverly Hills", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Rodeo Drive", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "SoFi Stadium", "acceptableCategories": ["activities", "photo spots"] }
+    ]
+  },
+  {
+    "id": "san-francisco-roundup",
+    "sourceUrl": "https://www.instagram.com/p/DVKf7PkEVLa/",
+    "destinationHint": "San Francisco",
+    "expectedPlaces": [
+      { "name": "Golden Gate Bridge", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Palace of Fine Arts", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Lombard Street", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Pier 39 Sea Lions", "aliases": ["Pier 39"], "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Dolores Park", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Queen Wilhelmina Tulip Garden", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Lyon Street Steps", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "California St", "aliases": ["California Street"], "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Lands End", "aliases": ["Lands End & Sutro Baths", "Sutro Baths"], "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Twin Peaks", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Hamon Observation Tower", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Baker Beach", "aliases": ["Marshall's Beach", "Marshalls Beach"], "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Lover's Lane", "aliases": ["Lovers Lane"], "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Panorama Park", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Fort Point National Historic Site", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Salesforce Park", "acceptableCategories": ["activities", "photo spots"] }
+    ]
+  },
+  {
+    "id": "spain-roundup",
+    "sourceUrl": "https://www.instagram.com/p/DQs0_7diFmF/",
+    "destinationHint": "Spain",
+    "expectedPlaces": [
+      { "name": "Ronda", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Montserrat", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Cies Islands", "aliases": ["Cíes Islands"], "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Albarracin", "aliases": ["Albarracín"], "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "Cabo de Gata", "acceptableCategories": ["activities", "photo spots"] },
+      { "name": "La Rioja", "acceptableCategories": ["activities", "photo spots"] }
+    ]
+  },
+  {
+    "id": "yunnan-baishuitai",
+    "sourceUrl": "https://www.instagram.com/p/DF2Zp-0MVWy/",
+    "destinationHint": "Yunnan",
+    "expectedPlaces": [
+      {
+        "name": "Baishuitai Scenic Area",
+        "acceptableCategories": ["activities", "photo spots"],
+        "address": "Shangri-La, Yunnan"
+      }
+    ]
+  }
+]

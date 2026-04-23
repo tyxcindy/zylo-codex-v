@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 
 import { requireApiUser } from "@/lib/auth";
-import { recordAuditEvent } from "@/lib/audit";
 import { getClientIp } from "@/lib/request";
 import { applyRateLimit } from "@/lib/security";
+import { createTrip } from "@/lib/trip-creation";
 import { parseWithSchema, tripSchema } from "@/lib/validation";
 
 export async function POST(request: Request) {
@@ -25,41 +25,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Too many trip requests." }, { status: 429 });
   }
 
-  const { data: destination } = await supabase
-    .from("destinations")
-    .select("id")
-    .eq("id", parsed.data.destinationId)
-    .eq("user_id", user.id)
-    .maybeSingle();
-
-  if (!destination) {
-    return NextResponse.json({ error: "Destination not found." }, { status: 404 });
-  }
-
-  const { data: trip, error } = await supabase
-    .from("trips")
-    .insert({
-      user_id: user.id,
-      destination_id: parsed.data.destinationId,
-      title: parsed.data.title,
-      status: "draft",
-      vibe: parsed.data.vibe,
-      travelers: parsed.data.travelers
-    })
-    .select("id, destination_id, title, status, vibe, travelers")
-    .single();
-
-  if (error) {
-    return NextResponse.json({ error: "Unable to create trip." }, { status: 500 });
-  }
-
-  await recordAuditEvent({
+  const result = await createTrip({
+    supabase,
     userId: user.id,
-    eventType: "api",
-    message: "Trip created",
-    severity: "info",
-    metadata: { ip, tripId: trip.id }
+    ip,
+    payload: parsed.data
   });
 
-  return NextResponse.json({ trip }, { status: 201 });
+  if (!result.ok) {
+    return NextResponse.json({ error: result.error }, { status: result.status });
+  }
+
+  return NextResponse.json({ trip: result.trip }, { status: result.status });
 }

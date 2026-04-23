@@ -6,6 +6,8 @@ import { useEffect, useMemo, useState, type DragEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { getApiErrorMessage } from "@/lib/client/api";
+import { savePlannerNotesRequest } from "@/lib/client/planner-notes";
 import type { Place } from "@/lib/domain";
 import { destinations, places } from "@/lib/data";
 import { useTripDraft } from "@/lib/use-trip-draft";
@@ -98,27 +100,13 @@ export function TripsBoard({ initialPlannerNotes }: TripsBoardProps) {
     setSaveMessage("");
 
     try {
-      const response = await fetch("/api/profile/planner-notes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ notes: plannerNotes })
-      });
-
-      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-
-      if (!response.ok) {
-        setSaveState("error");
-        setSaveMessage(payload?.error ?? "Could not save planner notes.");
-        return;
-      }
+      await savePlannerNotesRequest({ notes: plannerNotes });
 
       setSaveState("saved");
       setSaveMessage("Planner notes saved.");
-    } catch {
+    } catch (error) {
       setSaveState("error");
-      setSaveMessage("Could not save planner notes.");
+      setSaveMessage(getApiErrorMessage(error, "Could not save planner notes."));
     }
   }
 

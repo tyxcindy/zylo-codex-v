@@ -3,12 +3,16 @@
 import { useState } from "react";
 import { Sparkles } from "lucide-react";
 
+import { useLocale } from "@/components/locale-provider";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { getApiErrorMessage } from "@/lib/client/api";
+import { sendAiChatRequest } from "@/lib/client/ai-chat";
 import { tasteProfile } from "@/lib/data";
 
 export function AIConcierge() {
+  const { locale } = useLocale();
   const [messages, setMessages] = useState([
     {
       role: "assistant",
@@ -27,35 +31,41 @@ export function AIConcierge() {
   const [loading, setLoading] = useState(false);
 
   async function sendPrompt() {
-    if (!draft.trim()) {
+    const prompt = draft.trim();
+
+    if (!prompt) {
       return;
     }
 
-    const nextMessages = [...messages, { role: "user", text: draft }];
+    const nextMessages = [...messages, { role: "user", text: prompt }];
     setMessages(nextMessages);
     setLoading(true);
 
-    const response = await fetch("/api/ai/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        message: draft
-      })
-    });
+    try {
+      const payload = await sendAiChatRequest({
+        message: prompt,
+        locale
+      });
 
-    const payload = await response.json();
-    setLoading(false);
-    setDraft("");
-
-    setMessages([
-      ...nextMessages,
-      {
-        role: "assistant",
-        text: payload.reply ?? payload.error ?? "Zylo could not answer right now."
-      }
-    ]);
+      setMessages([
+        ...nextMessages,
+        {
+          role: "assistant",
+          text: payload.reply ?? "Zylo could not answer right now."
+        }
+      ]);
+      setDraft("");
+    } catch (error) {
+      setMessages([
+        ...nextMessages,
+        {
+          role: "assistant",
+          text: getApiErrorMessage(error, "Zylo could not answer right now.")
+        }
+      ]);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (

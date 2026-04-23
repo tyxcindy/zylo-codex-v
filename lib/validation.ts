@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { supportedLocales } from "@/lib/i18n";
 import { isSafeExternalUrl, sanitizePlainText } from "@/lib/security";
 
 const sanitizedText = z
@@ -57,7 +58,8 @@ export const tripGenerateSchema = z.object({
 export const chatSchema = z.object({
   tripId: z.string().uuid().optional(),
   message: sanitizedText.pipe(z.string().min(6).max(1200)),
-  imageHint: sanitizedText.pipe(z.string().max(120)).optional()
+  imageHint: sanitizedText.pipe(z.string().max(120)).optional(),
+  locale: z.enum(supportedLocales).optional()
 });
 
 export const authSignInSchema = z.object({

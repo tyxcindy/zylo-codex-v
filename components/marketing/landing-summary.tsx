@@ -30,7 +30,7 @@ export function LandingSummary() {
   return (
     <section className="page-shell pb-20 pt-6">
       <div className="home-panel px-6 py-8 sm:px-8">
-        <div className="grid gap-8 xl:grid-cols-[0.9fr_1.1fr] xl:items-start">
+        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
           <div className="space-y-5">
             <div>
               <p className="home-kicker">Why a normal person should care</p>
@@ -65,7 +65,7 @@ export function LandingSummary() {
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {summaryCards.map((card) => {
               const Icon = card.icon;
 

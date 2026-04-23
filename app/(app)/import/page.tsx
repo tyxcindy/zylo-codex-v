@@ -12,7 +12,7 @@ export default async function ImportPage() {
       <SectionIntro
         eyebrow="Import"
         title="Feed Zylo the way you already save."
-        description="Paste links, drop in captions, or upload screenshots and photos. The import layer is designed to be reliable today and extensible for future sync."
+        description="Paste links, drop in captions, or upload screenshots and photos. A destination hint can help free geocoding, but Zylo should still be able to reject weak imports without inventing places from the hint alone."
       />
       <ImportWorkbench sourceArtifacts={sourceArtifacts} />
     </section>

@@ -17,10 +17,10 @@ export default async function SignInPage({
     return (
       <div className="page-shell py-12">
         <div className="glass-panel mx-auto max-w-2xl p-8">
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[color:var(--text-soft)]">
+          <p className="app-kicker text-sm text-[color:var(--text-soft)]">
             Already inside
           </p>
-          <h1 className="mt-4 text-4xl">You’re already signed in.</h1>
+          <h1 className="app-display-title mt-4 text-[2.7rem] leading-[0.92] sm:text-[3.25rem]">You’re already signed in.</h1>
           <p className="mt-4 text-sm leading-7 text-[color:var(--text-soft)]">
             Jump back into the app instead of creating a second session.
           </p>
@@ -38,8 +38,8 @@ export default async function SignInPage({
     <div className="page-shell py-12">
       <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="auth-hero overflow-hidden rounded-[34px] border border-[color:var(--line)] p-8 text-white shadow-[var(--shadow)]">
-          <p className="text-sm uppercase tracking-[0.22em] text-white/70">Welcome back</p>
-          <h1 className="mt-4 text-5xl">Sign in to Zylo.</h1>
+          <p className="app-kicker text-sm text-white/70">Welcome back</p>
+          <h1 className="app-display-title mt-4 text-[3rem] leading-[0.9] text-white sm:text-[4.2rem]">Sign in to Zylo.</h1>
           <p className="mt-5 max-w-md text-sm leading-7 text-white/80">
             Pick up your saved spots, trip drafts, and map view without digging
             back through your camera roll or bookmarks.

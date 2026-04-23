@@ -91,8 +91,11 @@ Key files:
 - `components/app/app-shell.tsx`
 - `components/app/dashboard-overview.tsx`
 - `components/app/import-workbench.tsx`
+- `components/app/destinations-grid.tsx`
+- `components/app/destination-detail.tsx`
 - `components/app/places-grid.tsx`
 - `components/app/map-panel.tsx`
+- `components/app/search-workspace.tsx`
 - `components/app/trips-board.tsx`
 - `components/app/ai-concierge.tsx`
 - `components/app/settings-panel.tsx`
@@ -105,6 +108,33 @@ Design characteristics:
 - stronger contrast
 - simplified navigation
 - less atmospheric motion than the landing page
+
+## Route Surfaces That Exist Today
+
+Public:
+
+- `/`
+- `/pricing`
+- `/how-it-works`
+- `/security`
+- `/faq`
+- `/onboarding`
+- `/sign-in`
+- `/forgot-password`
+- `/update-password`
+
+Protected:
+
+- `/dashboard`
+- `/import`
+- `/destinations`
+- `/destinations/[id]`
+- `/places`
+- `/map`
+- `/search`
+- `/trips`
+- `/ai`
+- `/settings`
 
 ## Theme System
 
@@ -182,16 +212,26 @@ Important note:
 
 ### `components/app/`
 
-These represent the signed-in experience but are still partly fed by demo seed data.
+These represent the signed-in experience. Some are now snapshot-driven from live Supabase data, while others still depend on demo data.
 
 ## Data Usage In The Frontend
 
-### Demo-data-driven screens
+### Snapshot-driven routes
 
-- dashboard overview
+- dashboard
+- import
+- destinations
+- map
+- search
+- settings
+
+These routes now load user-scoped data through `lib/app-data.ts`.
+
+### Still substantially demo-data-driven
+
 - places grid
-- map panel
 - trips board
+- parts of the dashboard presentation layer
 - some settings content
 - FAQ content
 
@@ -200,18 +240,27 @@ These represent the signed-in experience but are still partly fed by demo seed d
 - import workbench
 - AI concierge
 - auth flows via client-side Supabase methods
+- planner notes save action inside trips board
+
+### Import workbench behavior
+
+- URL mode is intended for reel and post links
+- text mode handles captions, saved notes, and manual paste
+- image mode is still text-first and asks for OCR text or a description
+- the UI now explicitly tells the user that URL imports can try metadata, subtitles, frame OCR, and free parsing
+- the right-hand panel is now `Latest uploads`, sourced from recent `source_artifacts`
 
 ## Known Frontend Inconsistencies
-
-### Missing `/search` page
-
-- `AppShell` includes a `Search` nav item pointing to `/search`.
-- There is no `app/(app)/search/page.tsx`.
 
 ### Mixed real and fake data
 
 - The app looks coherent, but many views are still seeded from `lib/data.ts`.
 - This can fool a new engineer into thinking those screens are live.
+
+### Snapshot/live data is not universal yet
+
+- `getUserLibrarySnapshot()` now powers several routes.
+- Trips and some place-oriented surfaces still rely on demo structures.
 
 ### Auth duplication
 
@@ -238,6 +287,8 @@ If recreating the frontend from scratch, preserve:
 - the condensed heading style
 - the theme toggle and persistent theme
 - the bottom nav on mobile app routes
+- the manual-import-first onboarding framing
+- the import workbench split between active input and recent upload history
 - the import, trip, and AI product metaphors
 
 Avoid turning the interface into:
@@ -245,4 +296,3 @@ Avoid turning the interface into:
 - a generic SaaS admin panel
 - a template-looking Tailwind landing page
 - a flat monochrome travel dashboard
-

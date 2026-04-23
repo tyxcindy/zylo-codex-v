@@ -5,7 +5,7 @@ import { updateSession } from "@/lib/supabase/middleware";
 
 const SECURITY_HEADERS = {
   "Content-Security-Policy":
-    "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https://*.supabase.co https://generativelanguage.googleapis.com https://places.googleapis.com https://api.unsplash.com; font-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
+    "default-src 'self'; img-src 'self' data: blob: https: https://*.cartocdn.com https://basemaps.cartocdn.com https://tiles.basemaps.cartocdn.com; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https://*.supabase.co https://generativelanguage.googleapis.com https://places.googleapis.com https://api.unsplash.com https://*.cartocdn.com https://basemaps.cartocdn.com https://tiles.basemaps.cartocdn.com; font-src 'self' data: https://*.cartocdn.com https://tiles.basemaps.cartocdn.com; worker-src 'self' blob:; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
   "Referrer-Policy": "strict-origin-when-cross-origin",
   "X-Content-Type-Options": "nosniff",
   "X-Frame-Options": "DENY",
