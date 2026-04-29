@@ -72,14 +72,17 @@ export function LandingSummary() {
         <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
           <div className="space-y-5">
             <div>
-              <p className="home-kicker">What's so good</p>
+              <p className="home-kicker">What&apos;s so good</p>
               <h2 className="home-title mt-3 text-4xl sm:text-5xl">
-                A messy, disorganized saved reels to organzied itineraries.
+                From messy saved reels to organized itineraries.
               </h2>
             </div>
             <p className="home-copy max-w-2xl text-sm leading-8 sm:text-base">
-              Do you ever save a billion reels of restaurants you want to try or places you want to visit or even trip hacks that you want to rewatch one day? But now you have too many reels saved, and it's too much to go through. What if you can connect your Instagram/TikTok accounts, and this app will take all your starred/saved/liked reels and then review and organize them for you by city, restaurants, scenic spots, activities, photo spots, and hotels.  
-              If you want to learn more, head over to "<Link href="/how-it-works">Learn More.</Link>"
+              Do you ever save a billion reels of restaurants you want to try, places you want to
+              visit, or trip hacks you swear you&apos;ll rewatch one day? Then the pile gets too big to
+              use. Zylo is the cleanup crew: it takes saved travel content and organizes it into
+              destinations, restaurants, scenic spots, activities, photo spots, and hotels.
+              If you want the fuller product story, head over to <Link href="/how-it-works">Learn More.</Link>
             </p>
             <div className="home-panel-muted px-5 py-5">
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--home-muted)]">
@@ -87,7 +90,7 @@ export function LandingSummary() {
               </p>
               <p className="mt-3 text-sm leading-7 text-[color:var(--home-soft)]">
                 The detailed product story, future plans, and system specifics lives right on a
-                dedicated route "<Link href="/how-it-works">Learn More.</Link>"
+                dedicated route: <Link href="/how-it-works">Learn More.</Link>
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
