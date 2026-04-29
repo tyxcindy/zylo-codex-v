@@ -14,7 +14,12 @@ export default async function TripsPage() {
         title="Build the itinerary from the places you already wanted."
         description="Trips stay editable, AI-assisted, and grounded in your actual save history instead of another blank planning template."
       />
-      <TripsBoard initialPlannerNotes={snapshot.profile.plannerNotes} />
+      <TripsBoard
+        initialPlannerNotes={snapshot.profile.plannerNotes}
+        destinations={snapshot.destinations}
+        places={snapshot.places}
+        galleryOnly
+      />
     </section>
   );
 }

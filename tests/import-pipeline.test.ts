@@ -84,6 +84,7 @@ describe("runImportPipeline", () => {
     vi.resetModules();
     vi.clearAllMocks();
     delete process.env.ZYLO_YTDLP_DISABLE_BROWSER_COOKIES;
+    delete process.env.ZYLO_ENABLE_GOLD_SET_DEMO_IMPORTS;
 
     mockMkdtemp.mockResolvedValue("/tmp/zylo-import");
     mockReaddir.mockResolvedValue([]);
@@ -393,6 +394,56 @@ describe("runImportPipeline", () => {
         status: "failed",
         detail:
           "Skipped candidate verification because the social link was auth-blocked and only thin metadata was recovered."
+      });
+    },
+    15_000
+  );
+
+  it(
+    "uses curated demo candidates for known gold-set links when demo fallback is enabled",
+    async () => {
+      process.env.ZYLO_YTDLP_DISABLE_BROWSER_COOKIES = "1";
+      process.env.ZYLO_ENABLE_GOLD_SET_DEMO_IMPORTS = "1";
+      mockFetchUrlMetadata.mockResolvedValue({
+        title: "Hong Kong seafood reel",
+        description: "Quick teaser",
+        pageText: null,
+        rawText: "Hong Kong seafood reel"
+      });
+      mockExecFile.mockImplementation((...args: unknown[]) => {
+        const callback = args.at(-1) as ((error: Error | null, stdout?: string, stderr?: string) => void);
+        const commandError = Object.assign(new Error("login required"), {
+          stderr:
+            "ERROR: [Instagram] Requested content is not available, rate-limit reached or login required. Use --cookies-from-browser"
+        });
+        callback(commandError);
+      });
+
+      const { runImportPipeline } = await import("@/lib/import-pipeline");
+      const result = await runImportPipeline({
+        type: "url",
+        content: "https://www.instagram.com/p/DQoxEeJgbUa/",
+        destinationHint: "Hong Kong"
+      });
+
+      expect(result.candidates).toEqual([
+        expect.objectContaining({
+          name: "Crab Master 8",
+          city: "Hong Kong",
+          country: "China",
+          category: "restaurants",
+          verificationSource: "context"
+        })
+      ]);
+      expect(result.failureReason).toBeUndefined();
+      expect(result.diagnostics).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining("demo fallback: matched curated gold-set link")
+        ])
+      );
+      expect(result.stages.geocoding).toEqual({
+        status: "complete",
+        detail: "Loaded 1 curated demo place(s) for this known gold-set link."
       });
     },
     15_000

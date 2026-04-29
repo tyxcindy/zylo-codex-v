@@ -55,7 +55,7 @@ export function SearchWorkspace({
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[color:var(--app-text-soft)]">Search</p>
-            <h2 className="mt-3 text-3xl font-black text-[color:var(--app-text)]">Find anything you already saved.</h2>
+            <h2 className="mt-3 text-3xl font-semibold text-[color:var(--app-text)]">Find anything you already saved.</h2>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-[color:var(--app-text-soft)]">
               Search by place name, city, category, or tags. This is the fastest way to pull saved
               spots back out of the pile before building a trip.
@@ -86,7 +86,7 @@ export function SearchWorkspace({
                   onClick={() => setCategory(option)}
                   className={
                     active
-                      ? "rounded-full border border-white/16 bg-[linear-gradient(135deg,var(--brand)_0%,color-mix(in_srgb,var(--brand)_72%,white)_100%)] px-4 py-2 text-sm font-semibold text-white shadow-[0_16px_28px_rgba(91,104,255,0.22)]"
+                      ? "rounded-full border border-transparent bg-[color:var(--brand)] px-4 py-2 text-sm font-semibold text-white shadow-[0_12px_22px_rgba(91,104,255,0.22)]"
                       : "rounded-full border border-[color:var(--line)] bg-[color:var(--glass-bg)] px-4 py-2 text-sm font-semibold text-[color:var(--app-text-soft)]"
                   }
                 >
@@ -107,7 +107,7 @@ export function SearchWorkspace({
               <Card key={place.id} className="app-card-soft px-5 py-5 text-[color:var(--app-text)]">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-xl font-bold text-[color:var(--app-text)]">{place.name}</p>
+                    <p className="text-xl font-semibold text-[color:var(--app-text)]">{place.name}</p>
                     <p className="mt-1 text-sm text-[color:var(--app-text-soft)]">
                       {place.city}, {place.country} · {place.category}
                     </p>
@@ -136,7 +136,7 @@ export function SearchWorkspace({
 
           {results.length === 0 ? (
             <Card className="app-card-soft px-6 py-10 text-center text-[color:var(--app-text)]">
-              <p className="text-xl font-bold text-[color:var(--app-text)]">No saved place matches that yet.</p>
+              <p className="text-xl font-semibold text-[color:var(--app-text)]">No saved place matches that yet.</p>
               <p className="mt-3 text-sm text-[color:var(--app-text-soft)]">
                 Try another city, a category, or import a new reel link first.
               </p>

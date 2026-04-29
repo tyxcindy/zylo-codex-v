@@ -9,11 +9,11 @@ export function SiteFooter() {
   const { messages } = useLocale();
 
   return (
-    <footer className="border-t border-[color:var(--line)] bg-[color:var(--glass-bg)]/70 py-7 backdrop-blur-2xl">
-      <div className="page-shell flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-        <div className="glass-panel max-w-md px-5 py-4">
+    <footer className="border-t border-[color:var(--line)] bg-[color:var(--glass-bg)]/70 py-4 backdrop-blur-2xl">
+      <div className="page-shell flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+        <div className="glass-panel max-w-md px-5 py-3">
           <Logo />
-          <p className="mt-3 text-sm leading-6 text-[color:var(--text-soft)]">
+          <p className="mt-2 text-sm leading-6 text-[color:var(--text-soft)]">
             {messages.siteFooter.description}
           </p>
         </div>

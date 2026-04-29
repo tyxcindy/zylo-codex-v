@@ -266,7 +266,7 @@ export default function ScrollExpansionHero({
     overlayExitProgress * (isMobileState ? 180 : 420);
   const titleLeftY = splitProgress * (isMobileState ? 40 : 56);
   const titleRightY = splitProgress * (isMobileState ? 40 : 56);
-  const splitTitleClass = isMobileState ? "text-[1.7rem]" : "text-[3.5rem] lg:text-[4.5rem]";
+  const splitTitleClass = isMobileState ? "text-[1.42rem]" : "text-[2.9rem] lg:text-[3.7rem]";
   const metaY = overlayExitProgress * (isMobileState ? 260 : 360);
 
   return (
@@ -437,7 +437,7 @@ export default function ScrollExpansionHero({
                       transition={{ duration: 0.16, ease: "linear" }}
                     />
                     <motion.h2
-                      className={`relative z-10 max-w-[10ch] text-[1.8rem] font-semibold leading-[0.92] md:text-[3.3rem] lg:text-[4.15rem] ${
+                      className={`relative z-10 max-w-[10ch] text-[1.48rem] font-semibold leading-[0.92] md:text-[2.75rem] lg:text-[3.4rem] ${
                         isDark ? "text-blue-100" : "text-blue-50"
                       }`}
                       style={{ transform: `translateX(-${titleTranslateX}px)` }}
@@ -445,7 +445,7 @@ export default function ScrollExpansionHero({
                       {firstWord}
                     </motion.h2>
                     <motion.h2
-                      className={`relative z-10 max-w-[12ch] text-center text-[1.8rem] font-semibold leading-[0.92] md:text-[3.3rem] lg:text-[4.15rem] ${
+                      className={`relative z-10 max-w-[12ch] text-center text-[1.48rem] font-semibold leading-[0.92] md:text-[2.75rem] lg:text-[3.4rem] ${
                         isDark ? "text-blue-100" : "text-blue-50"
                       }`}
                       style={{ transform: `translateX(${titleTranslateX}px)` }}
@@ -458,7 +458,7 @@ export default function ScrollExpansionHero({
             </div>
 
             <motion.section
-              className="flex w-full max-w-6xl flex-col px-4 py-10 md:px-10 lg:py-20"
+              className="flex w-full max-w-6xl flex-col px-4 pb-4 pt-8 md:px-10 lg:pb-6 lg:pt-10"
               initial={{ opacity: 0 }}
               animate={{ opacity: showContent ? 1 : 0 }}
               transition={{ duration: 0.7 }}

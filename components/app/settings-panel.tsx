@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { WeaveSpinner } from "@/components/ui/weave-spinner";
 import { getApiErrorMessage } from "@/lib/client/api";
 import { saveProfileSettingsRequest } from "@/lib/client/profile-settings";
 import { platformConnections } from "@/lib/data";
@@ -156,7 +157,14 @@ export function SettingsPanel({
               onClick={handleSaveProfile}
               disabled={saveState === "saving" || !selectedHomeCity}
             >
-              {saveState === "saving" ? "Saving..." : "Save profile"}
+              {saveState === "saving" ? (
+                <>
+                  <WeaveSpinner size={20} label="Saving profile" />
+                  Saving...
+                </>
+              ) : (
+                "Save profile"
+              )}
             </Button>
             {saveMessage ? (
               <p

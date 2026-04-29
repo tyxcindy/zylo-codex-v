@@ -1,5 +1,7 @@
 import { execFile } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { access, readdir, readFile } from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
 
@@ -157,18 +159,91 @@ function resolveSocialCookiePlatform(url: string) {
   return null;
 }
 
+function getBrowserProfileProbeCandidates(browser: string) {
+  if (browser.includes(":")) {
+    return [browser];
+  }
+
+  if (process.platform !== "darwin") {
+    return [browser];
+  }
+
+  const localStatePaths: Partial<Record<string, string>> = {
+    chrome: path.join(os.homedir(), "Library/Application Support/Google/Chrome/Local State"),
+    brave: path.join(
+      os.homedir(),
+      "Library/Application Support/BraveSoftware/Brave-Browser/Local State"
+    ),
+    edge: path.join(os.homedir(), "Library/Application Support/Microsoft Edge/Local State")
+  };
+  const localStatePath = localStatePaths[browser];
+
+  if (!localStatePath) {
+    return [browser];
+  }
+
+  try {
+    const parsed = JSON.parse(readFileSync(localStatePath, "utf8")) as {
+      profile?: {
+        last_used?: string;
+        info_cache?: Record<string, unknown>;
+      };
+    };
+    const profileKeys = Object.keys(parsed.profile?.info_cache ?? {});
+
+    if (profileKeys.length === 0) {
+      return [browser];
+    }
+
+    const orderedKeys = profileKeys.sort((left, right) => {
+      if (left === parsed.profile?.last_used) {
+        return -1;
+      }
+
+      if (right === parsed.profile?.last_used) {
+        return 1;
+      }
+
+      if (left === "Default") {
+        return -1;
+      }
+
+      if (right === "Default") {
+        return 1;
+      }
+
+      return left.localeCompare(right);
+    });
+
+    return [browser, ...orderedKeys.map((profile) => `${browser}:${profile}`)];
+  } catch {
+    return [browser];
+  }
+}
+
 function getCookieBrowserCandidates() {
   const explicit = process.env.ZYLO_YTDLP_COOKIE_BROWSERS?.trim();
 
   if (explicit) {
-    return explicit
+    return Array.from(
+      new Set(
+        explicit
       .split(",")
       .map((browser) => browser.trim())
-      .filter(Boolean);
+          .filter(Boolean)
+          .flatMap((browser) => getBrowserProfileProbeCandidates(browser))
+      )
+    );
   }
 
   if (process.platform === "darwin") {
-    return ["chrome", "safari", "brave", "edge"];
+    return Array.from(
+      new Set(
+        ["chrome", "safari", "brave", "edge"].flatMap((browser) =>
+          getBrowserProfileProbeCandidates(browser)
+        )
+      )
+    );
   }
 
   if (process.platform === "win32") {

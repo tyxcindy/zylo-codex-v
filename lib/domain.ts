@@ -92,6 +92,7 @@ export interface Trip {
   vibe: string;
   travelers: number;
   days: TripDay[];
+  plannerNotes?: string;
   imageUrl?: string;
   dateRange?: string;
 }

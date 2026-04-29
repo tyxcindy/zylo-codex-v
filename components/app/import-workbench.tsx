@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { WeaveSpinner } from "@/components/ui/weave-spinner";
 import { getApiErrorMessage } from "@/lib/client/api";
 import { submitImportRequest, waitForImportCompletion } from "@/lib/client/imports";
 import type { SourceArtifact } from "@/lib/domain";
@@ -134,7 +135,7 @@ export function ImportWorkbench({ sourceArtifacts }: { sourceArtifacts: SourceAr
                 type="button"
                 className={`rounded-[24px] border px-4 py-4 text-left transition ${
                   active
-                    ? "border-white/16 bg-[linear-gradient(135deg,var(--brand)_0%,color-mix(in_srgb,var(--brand)_72%,white)_100%)] text-white shadow-[0_18px_32px_rgba(91,104,255,0.24)]"
+                    ? "border-transparent bg-[color:var(--brand)] text-white shadow-[0_16px_28px_rgba(91,104,255,0.24)]"
                     : "border-[color:var(--line)] bg-[color:var(--glass-bg)] text-[color:var(--text-soft)] shadow-[inset_0_1px_0_rgba(255,255,255,0.32)]"
                 } min-h-[112px] px-5 py-5`}
                 onClick={() => setMode(item.id)}
@@ -147,11 +148,13 @@ export function ImportWorkbench({ sourceArtifacts }: { sourceArtifacts: SourceAr
         </div>
         <div className="mt-5 space-y-4">
           {mode === "url" && (
-            <Input
-              value={content}
-              onChange={(event) => setContent(event.target.value)}
-              placeholder="Instagram, TikTok, blog, newsletter, or any travel link"
-            />
+            <>
+              <Input
+                value={content}
+                onChange={(event) => setContent(event.target.value)}
+                placeholder="Instagram, TikTok, blog, newsletter, or any travel link"
+              />
+            </>
           )}
           {mode === "text" && (
             <Textarea
@@ -173,17 +176,20 @@ export function ImportWorkbench({ sourceArtifacts }: { sourceArtifacts: SourceAr
             placeholder="Destination hint (optional, but helps free geocoding)"
           />
           {status ? (
-            <p
-              className={`text-sm ${
+            <div
+              className={`rounded-[20px] border px-4 py-3 ${
                 statusTone === "error"
-                  ? "text-rose-300"
+                  ? "status-error"
                   : statusTone === "success"
-                    ? "text-emerald-300"
-                    : "text-[color:var(--text-soft)]"
+                    ? "status-success"
+                    : "border-[color:var(--line)] bg-[color:var(--glass-bg)] text-[color:var(--text-soft)]"
               }`}
             >
-              {status}
-            </p>
+              <div className="flex items-center gap-3">
+                {loading ? <WeaveSpinner size={28} label="Import loading" /> : null}
+                <p className="text-sm">{status}</p>
+              </div>
+            </div>
           ) : null}
           <Button
             type="button"
@@ -192,7 +198,14 @@ export function ImportWorkbench({ sourceArtifacts }: { sourceArtifacts: SourceAr
             onClick={handleSubmit}
             disabled={loading || !trimmedContent}
           >
-            {loading ? "Sending..." : "Send to Zylo"}
+            {loading ? (
+              <>
+                <WeaveSpinner size={22} label="Sending import" />
+                Sending...
+              </>
+            ) : (
+              "Send to Zylo"
+            )}
           </Button>
         </div>
       </Card>

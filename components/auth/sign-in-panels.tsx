@@ -1,14 +1,15 @@
 "use client";
 
-import { startTransition, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useFormStatus } from "react-dom";
 
+import { signInAction } from "@/app/sign-in/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getApiErrorMessage } from "@/lib/client/api";
 import { signUpWithApi } from "@/lib/client/auth-sign-up";
-import { createClient } from "@/lib/supabase/client";
 
 function withMessage(pathname: string, key: "error" | "message", value: string, next?: string) {
   const params = new URLSearchParams();
@@ -55,6 +56,25 @@ function getErrorMessage(error: unknown, fallback: string) {
   return message || fallback;
 }
 
+function SignInSubmitButton({
+  disabled
+}: {
+  disabled: boolean;
+}) {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button
+      type="submit"
+      className="w-full !border !border-[color:var(--line)] !bg-[color:var(--surface-2)] !text-[color:var(--text)] hover:!opacity-100"
+      variant="app"
+      disabled={pending || disabled}
+    >
+      {pending ? "Signing in..." : "Continue"}
+    </Button>
+  );
+}
+
 export function SignInPanels({
   initialError,
   initialMessage,
@@ -67,7 +87,6 @@ export function SignInPanels({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [signInPending, setSignInPending] = useState(false);
   const [signUpPending, setSignUpPending] = useState(false);
   const [error, setError] = useState(initialError ?? "");
   const [message, setMessage] = useState(initialMessage ?? "");
@@ -76,6 +95,14 @@ export function SignInPanels({
   const [signUpDisplayName, setSignUpDisplayName] = useState("");
   const [signUpEmail, setSignUpEmail] = useState("");
   const [signUpPassword, setSignUpPassword] = useState("");
+
+  useEffect(() => {
+    setError(initialError ?? "");
+  }, [initialError]);
+
+  useEffect(() => {
+    setMessage(initialMessage ?? "");
+  }, [initialMessage]);
 
   const replaceMessage = (key: "error" | "message", value: string) => {
     setError(key === "error" ? value : "");
@@ -93,31 +120,6 @@ export function SignInPanels({
       startTransition(() => {
         router.replace(next ? `${pathname}?next=${encodeURIComponent(next)}` : pathname);
       });
-    }
-  };
-
-  const handleSignIn = async () => {
-    setSignInPending(true);
-    clearMessages();
-
-    try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signInWithPassword({
-        email: signInEmail.trim().toLowerCase(),
-        password: signInPassword
-      });
-
-      if (error) {
-        replaceMessage("error", getErrorMessage(error, "Invalid email or password."));
-        return;
-      }
-
-      router.push(next);
-      router.refresh();
-    } catch (clientError) {
-      replaceMessage("error", getErrorMessage(clientError, "Unable to sign in."));
-    } finally {
-      setSignInPending(false);
     }
   };
 
@@ -164,7 +166,14 @@ export function SignInPanels({
         {message ? (
           <p className="status-success mt-4 rounded-2xl px-4 py-3 text-sm">{message}</p>
         ) : null}
-        <div className="mt-6 space-y-4">
+        <form
+          action={signInAction}
+          className="mt-6 space-y-4"
+          onSubmit={() => {
+            setError("");
+            setMessage("");
+          }}
+        >
           <Input
             name="email"
             placeholder="Email address"
@@ -181,16 +190,9 @@ export function SignInPanels({
             value={signInPassword}
             onChange={(event) => setSignInPassword(event.target.value)}
           />
-          <Button
-            type="button"
-            className="w-full !border !border-[color:var(--line)] !bg-[color:var(--surface-2)] !text-[color:var(--text)] hover:!opacity-100"
-            variant="app"
-            disabled={signInPending || !signInEmail.trim() || !signInPassword}
-            onClick={handleSignIn}
-          >
-            {signInPending ? "Signing in..." : "Continue"}
-          </Button>
-        </div>
+          <input type="hidden" name="next" value={next} />
+          <SignInSubmitButton disabled={!signInEmail.trim() || !signInPassword} />
+        </form>
         <p className="mt-6 text-sm text-[color:var(--text-soft)]">
           Forgot it?{" "}
           <Link href="/forgot-password" className="font-semibold text-[color:var(--text)]">

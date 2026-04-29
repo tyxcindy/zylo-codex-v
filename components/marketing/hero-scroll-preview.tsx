@@ -59,7 +59,7 @@ export function HeroScrollPreview() {
 
           <div className="mt-6 grid gap-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
             <div className="space-y-5">
-              <h2 className="home-title text-[2.8rem] leading-[0.9] sm:text-[4rem]">Your saved travel intent, turned into a usable plan.</h2>
+              <h2 className="home-title text-[2.8rem] leading-[0.9] sm:text-[4rem]">Your saved travel stash, turned into a usable plan.</h2>
               <p className="home-copy max-w-2xl text-base leading-8 sm:text-lg">
                 Turn saved reels, pasted captions, screenshots, and food finds into organized places,
                 destination boards, maps, and trip plans you can actually use.
@@ -134,8 +134,7 @@ export function HeroScrollPreview() {
                     Finds the real places hiding inside your saved content.
                   </p>
                   <p className="mt-4 max-w-md text-sm leading-7 text-[color:var(--home-soft)]">
-                    The source stays internal. The user sees place cards, destinations, maps, and
-                    trip boards instead of going back through raw links.
+                    Filters all your saved reels from doomscrolling and organize them by destination. Explore all places saved through maps, trip boards, and itinerary planning.
                   </p>
                   <div className="hero-extraction-panel relative mt-8 overflow-hidden rounded-[26px] border border-[color:var(--home-line)] p-4 sm:p-5">
                     <div className="hero-extraction-grid pointer-events-none absolute inset-0 opacity-35" />

@@ -1,6 +1,8 @@
 export {};
 
 describe("import pipeline media", () => {
+  const originalPlatform = process.platform;
+
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
@@ -8,6 +10,13 @@ describe("import pipeline media", () => {
     delete process.env.ZYLO_YTDLP_COOKIE_FILES;
     delete process.env.ZYLO_YTDLP_COOKIE_BROWSERS;
     delete process.env.ZYLO_YTDLP_DISABLE_BROWSER_COOKIES;
+  });
+
+  afterEach(() => {
+    Object.defineProperty(process, "platform", {
+      value: originalPlatform
+    });
+    vi.doUnmock("node:fs");
   });
 
   it("passes the certificate-bypass flag to yt-dlp metadata fetches", async () => {
@@ -93,6 +102,71 @@ describe("import pipeline media", () => {
       expect.objectContaining({
         label: expect.stringContaining("cookies:")
       })
+    );
+  });
+
+  it("expands plain chrome browser probing into discovered Chrome profiles on macOS", async () => {
+    vi.doMock("node:fs", async () => {
+      const actual = await vi.importActual<typeof import("node:fs")>("node:fs");
+      return {
+        ...actual,
+        readFileSync: vi.fn(() =>
+          JSON.stringify({
+            profile: {
+              last_used: "Profile 5",
+              info_cache: {
+                Default: {},
+                "Profile 2": {},
+                "Profile 5": {}
+              }
+            }
+          })
+        )
+      };
+    });
+    Object.defineProperty(process, "platform", {
+      value: "darwin"
+    });
+    process.env.ZYLO_YTDLP_COOKIE_BROWSERS = "chrome";
+
+    const { buildYtDlpAttempts } = await import("@/lib/import-pipeline-media");
+    const attempts = buildYtDlpAttempts(
+      "https://www.instagram.com/p/DQoxEeJgbUa/",
+      {
+        dumpSingleJson: true,
+        skipDownload: true,
+        noCheckCertificates: true,
+        noWarnings: true
+      },
+      "login required"
+    );
+
+    expect(attempts).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          label: "cookies:chrome",
+          flags: expect.objectContaining({
+            cookiesFromBrowser: "chrome"
+          })
+        }),
+        expect.objectContaining({
+          label: "cookies:chrome:Profile 5",
+          flags: expect.objectContaining({
+            cookiesFromBrowser: "chrome:Profile 5"
+          })
+        }),
+        expect.objectContaining({
+          label: "cookies:chrome:Default",
+          flags: expect.objectContaining({
+            cookiesFromBrowser: "chrome:Default"
+          })
+        })
+      ])
+    );
+    expect(
+      attempts.findIndex((attempt) => attempt.label === "cookies:chrome:Profile 5")
+    ).toBeLessThan(
+      attempts.findIndex((attempt) => attempt.label === "cookies:chrome:Default")
     );
   });
 

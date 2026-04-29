@@ -29,6 +29,7 @@ export async function POST(request: Request) {
   const result = await saveProfileSettings({
     supabase,
     userId: user.id,
+    email: user.email,
     displayName: parsed.data.displayName,
     homeCity: parsed.data.homeCity
   });

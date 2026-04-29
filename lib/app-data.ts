@@ -9,6 +9,7 @@ import type { Destination, Place, SourceArtifact, Trip, UserProfileSummary } fro
 import { resolveHomeCityOption } from "@/lib/home-city-options";
 import { resolvePlaceImageUrl } from "@/lib/place-media";
 import { normalizeSavedPlace } from "@/lib/place-quality";
+import { lookupPlaceSummaryFree } from "@/lib/providers/nominatim";
 
 type SupabaseLike = Awaited<ReturnType<typeof import("@/lib/supabase/server").createClient>>;
 
@@ -69,7 +70,68 @@ function pickDestinationImage(
   return "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80";
 }
 
-function mapPlace(row: any): Place | null {
+function hasUsableCoordinates(latitude: unknown, longitude: unknown) {
+  const lat = Number(latitude);
+  const lng = Number(longitude);
+
+  if (Number.isNaN(lat) || Number.isNaN(lng)) {
+    return false;
+  }
+
+  if (Math.abs(lat) < 0.000001 && Math.abs(lng) < 0.000001) {
+    return false;
+  }
+
+  return true;
+}
+
+async function resolvePlaceCoordinates(
+  row: any,
+  supabase: SupabaseLike,
+  userId: string
+) {
+  if (hasUsableCoordinates(row.latitude, row.longitude)) {
+    return {
+      lat: Number(row.latitude),
+      lng: Number(row.longitude)
+    };
+  }
+
+  const query = [row.name, row.address, row.city, row.country].filter(Boolean).join(", ");
+  const geocoded = query ? await lookupPlaceSummaryFree(query) : null;
+
+  if (geocoded) {
+    const lat = geocoded.location.latitude;
+    const lng = geocoded.location.longitude;
+
+    await supabase
+      .from("places")
+      .update({ latitude: lat, longitude: lng })
+      .eq("id", row.id)
+      .eq("user_id", userId);
+
+    return { lat, lng };
+  }
+
+  const cityFallback = resolveHomeCityOption(row.city ?? "");
+  if (cityFallback) {
+    return {
+      lat: cityFallback.coordinates.lat,
+      lng: cityFallback.coordinates.lng
+    };
+  }
+
+  return {
+    lat: 0,
+    lng: 0
+  };
+}
+
+async function mapPlace(
+  row: any,
+  supabase: SupabaseLike,
+  userId: string
+): Promise<Place | null> {
   const normalizedPlace = normalizeSavedPlace({
     name: row.name,
     city: row.city,
@@ -80,6 +142,8 @@ function mapPlace(row: any): Place | null {
     return null;
   }
 
+  const coordinates = await resolvePlaceCoordinates(row, supabase, userId);
+
   return {
     id: row.id,
     destinationId: row.destination_id ?? "",
@@ -89,10 +153,7 @@ function mapPlace(row: any): Place | null {
     category: row.category,
     address: row.address ?? "",
     description: row.description ?? "",
-    coordinates: {
-      lat: Number(row.latitude ?? 0),
-      lng: Number(row.longitude ?? 0)
-    },
+    coordinates,
     timesSeen: Number(row.times_seen ?? 1),
     sourceCount: Number(row.source_count ?? 1),
     isVisited: Boolean(row.is_visited),
@@ -164,8 +225,9 @@ export async function getUserLibrarySnapshot(
         .maybeSingle()
     ]);
 
-  const places = (placesData ?? [])
-    .map((row) => mapPlace(row))
+  const places = (await Promise.all(
+    (placesData ?? []).map((row) => mapPlace(row, supabase, userId))
+  ))
     .filter((place): place is Place => Boolean(place));
   const shouldUseDemoLibrary = places.length === 0 && (destinationsData?.length ?? 0) === 0;
   const libraryPlaces = shouldUseDemoLibrary ? demoPlaces : places;

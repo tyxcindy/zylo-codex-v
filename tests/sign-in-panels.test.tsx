@@ -3,26 +3,28 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { SignInPanels } from "@/components/auth/sign-in-panels";
 
 const replace = vi.fn();
-const push = vi.fn();
-const refresh = vi.fn();
-const signInWithPassword = vi.fn();
+
+vi.mock("react-dom", async () => {
+  const actual = await vi.importActual<typeof import("react-dom")>("react-dom");
+
+  return {
+    ...actual,
+    useFormStatus: () => ({ pending: false })
+  };
+});
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({
     replace,
-    push,
-    refresh
+    push: vi.fn(),
+    refresh: vi.fn()
   }),
   usePathname: () => "/sign-in",
   useSearchParams: () => new URLSearchParams()
 }));
 
-vi.mock("@/lib/supabase/client", () => ({
-  createClient: () => ({
-    auth: {
-      signInWithPassword
-    }
-  })
+vi.mock("@/app/sign-in/actions", () => ({
+  signInAction: vi.fn()
 }));
 
 function getSignUpFields() {
@@ -40,9 +42,6 @@ describe("SignInPanels", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
     replace.mockReset();
-    push.mockReset();
-    refresh.mockReset();
-    signInWithPassword.mockReset();
   });
 
   it("shows the duplicate-email error returned by the signup API", async () => {

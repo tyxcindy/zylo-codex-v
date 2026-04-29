@@ -51,6 +51,7 @@ async function countRecentProfileFieldChanges(userId: string, field: "displayNam
 export async function saveProfileSettings(input: {
   supabase: SupabaseLike;
   userId: string;
+  email?: string | null;
   displayName: string;
   homeCity: string;
 }): Promise<SaveProfileSettingsResult> {
@@ -81,7 +82,9 @@ export async function saveProfileSettings(input: {
   }
 
   const currentDisplayName = normalizeProfileField(currentProfile?.display_name ?? "");
-  const currentHomeCity = normalizeProfileField(currentProfile?.home_city ?? "");
+  const currentHomeCity =
+    resolveHomeCityOption(currentProfile?.home_city ?? "")?.value ??
+    normalizeProfileField(currentProfile?.home_city ?? "");
   const displayNameChanged = currentDisplayName !== displayName;
   const homeCityChanged = currentHomeCity !== homeCity;
 
@@ -109,13 +112,41 @@ export async function saveProfileSettings(input: {
     }
   }
 
-  const { error } = await input.supabase
-    .from("profiles")
-    .update({
-      display_name: displayName,
-      home_city: homeCity
-    })
-    .eq("user_id", input.userId);
+  let error: { message?: string } | null = null;
+
+  if (currentProfile) {
+    const result = await input.supabase
+      .from("profiles")
+      .update({
+        display_name: displayName,
+        home_city: homeCity
+      })
+      .eq("user_id", input.userId);
+
+    error = result.error;
+  } else {
+    const email = input.email?.trim().toLowerCase() ?? "";
+
+    if (!email) {
+      return {
+        ok: false,
+        status: 500,
+        error: "Could not save profile settings."
+      };
+    }
+
+    const result = await input.supabase.from("profiles").upsert(
+      {
+        user_id: input.userId,
+        email,
+        display_name: displayName,
+        home_city: homeCity
+      },
+      { onConflict: "user_id" }
+    );
+
+    error = result.error;
+  }
 
   if (error) {
     return {

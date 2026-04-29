@@ -1,4 +1,4 @@
-@import url("https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&f[]=clash-display@500,600,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Cormorant+Garamond:wght@600;700&display=swap");
 @import "maplibre-gl/dist/maplibre-gl.css";
 
 @tailwind base;
@@ -7,59 +7,63 @@
 
 :root {
   --font-sans:
-    "General Sans", "Avenir Next", "SF Pro Display", "Inter", "Segoe UI", sans-serif;
+    "Plus Jakarta Sans", "Avenir Next", "SF Pro Display", "Inter", "Segoe UI", sans-serif;
   --font-display:
-    "Clash Display", "Avenir Next Condensed", "Avenir Next", "SF Pro Display", "Inter", sans-serif;
+    "Plus Jakarta Sans", "Avenir Next", "SF Pro Display", "Inter", sans-serif;
   --font-mono-ui:
     var(--font-mono-accent), "SF Mono", "JetBrains Mono", "IBM Plex Mono", monospace;
-  --background: 36 48% 95%;
+  --font-logo:
+    "Cormorant Garamond", "Times New Roman", serif;
+  --background: 208 50% 97%;
   --foreground: 224 32% 12%;
   --card: 0 0% 100%;
-  --muted: 34 32% 90%;
+  --muted: 208 32% 92%;
   --border: 224 15% 84%;
-  --accent: 20 95% 61%;
-  --primary: 228 89% 61%;
-  --secondary: 146 70% 47%;
-  --surface: #f6efe6;
-  --surface-2: #ebe0d2;
-  --card: #fffaf3;
-  --card-2: #f6efe8;
-  --text: #1b2130;
-  --text-soft: #5f6575;
-  --line: rgba(53, 56, 79, 0.14);
-  --brand: #5b68ff;
-  --brand-2: #ff7a59;
-  --brand-3: #23c983;
+  --accent: 229 52% 63%;
+  --primary: 217 77% 47%;
+  --secondary: 239 52% 63%;
+  --surface: #f4f8fc;
+  --surface-2: #edf3fb;
+  --card: #ffffff;
+  --card-2: #f8fbff;
+  --text: #121726;
+  --text-soft: #646d80;
+  --line: rgba(18, 23, 38, 0.1);
+  --brand: #1c60d6;
+  --brand-2: #6f73d2;
+  --brand-3: #99d1ff;
+  --primary-soft: #99d1ff;
+  --spinner-node: #000000;
   --shadow: 0 30px 70px rgba(37, 39, 61, 0.14);
-  --glass-bg: rgba(255, 250, 245, 0.62);
-  --glass-bg-strong: rgba(255, 252, 248, 0.76);
+  --glass-bg: rgba(255, 255, 255, 0.66);
+  --glass-bg-strong: rgba(255, 255, 255, 0.84);
   --glass-edge: rgba(255, 255, 255, 0.72);
   --glass-shadow:
-    0 28px 70px rgba(57, 48, 36, 0.14),
+    0 24px 64px rgba(58, 73, 99, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.82),
-    inset 0 -1px 0 rgba(184, 160, 129, 0.16);
+    inset 0 -1px 0 rgba(217, 240, 255, 0.22);
   --glass-shadow-soft:
-    0 18px 46px rgba(57, 48, 36, 0.1),
+    0 14px 32px rgba(58, 73, 99, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.78);
   --glass-hover: rgba(255, 255, 255, 0.18);
   --home-text: #182033;
-  --home-soft: rgba(24, 32, 51, 0.78);
+  --home-soft: rgba(24, 32, 51, 0.76);
   --home-muted: rgba(24, 32, 51, 0.56);
   --home-line: rgba(24, 32, 51, 0.12);
   --home-chip-bg: rgba(255, 255, 255, 0.44);
   --home-well: rgba(255, 255, 255, 0.3);
   --home-panel-bg:
-    linear-gradient(180deg, rgba(255, 251, 247, 0.7) 0%, rgba(246, 236, 226, 0.5) 100%);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.76) 0%, rgba(247, 251, 255, 0.56) 100%);
   --home-panel-muted-bg: rgba(255, 255, 255, 0.3);
   --app-bg:
-    radial-gradient(circle at 14% 10%, rgba(113, 126, 255, 0.12), transparent 22%),
-    radial-gradient(circle at 88% 0%, rgba(255, 163, 122, 0.14), transparent 24%),
-    linear-gradient(180deg, #f8f1e8 0%, #efe4d6 100%);
-  --app-sidebar-bg: rgba(255, 252, 248, 0.5);
-  --app-card-bg: rgba(255, 252, 248, 0.66);
-  --app-card-soft-bg: rgba(255, 255, 255, 0.42);
-  --app-text: #172031;
-  --app-text-soft: rgba(23, 32, 49, 0.64);
+    radial-gradient(circle at 12% 0%, rgba(153, 209, 255, 0.32), transparent 18%),
+    radial-gradient(circle at 92% 0%, rgba(255, 207, 228, 0.22), transparent 20%),
+    linear-gradient(180deg, #f4f8fc 0%, #edf3fb 48%, #f7f8fc 100%);
+  --app-sidebar-bg: rgba(255, 255, 255, 0.56);
+  --app-card-bg: rgba(255, 255, 255, 0.82);
+  --app-card-soft-bg: rgba(255, 255, 255, 0.62);
+  --app-text: #121726;
+  --app-text-soft: rgba(18, 23, 38, 0.66);
   --atmo-sky-top: #f3f8ff;
   --atmo-sky-mid: #d9e8ff;
   --atmo-sky-bottom: #fff1e1;
@@ -70,27 +74,29 @@
 }
 
 html[data-theme="dark"] {
-  --background: 228 23% 10%;
+  --background: 0 0% 0%;
   --foreground: 210 33% 96%;
   --card: 227 22% 16%;
-  --muted: 228 20% 18%;
+  --muted: 228 20% 10%;
   --border: 224 18% 26%;
-  --accent: 20 95% 61%;
-  --primary: 228 89% 70%;
-  --secondary: 146 70% 56%;
-  --surface: #0b0e14;
-  --surface-2: #141923;
-  --card: #171b25;
-  --card-2: #1d2330;
-  --text: #eef2ff;
-  --text-soft: #b0b9d3;
+  --accent: 229 52% 63%;
+  --primary: 217 77% 47%;
+  --secondary: 239 52% 63%;
+  --surface: #000000;
+  --surface-2: #090b10;
+  --card: #101012;
+  --card-2: #16161a;
+  --text: #f5f7fb;
+  --text-soft: #aeb6c8;
   --line: rgba(255, 255, 255, 0.1);
-  --brand: #8b84ff;
-  --brand-2: #ff9875;
-  --brand-3: #49d3a0;
+  --brand: #1c60d6;
+  --brand-2: #6f73d2;
+  --brand-3: #99d1ff;
+  --primary-soft: #99d1ff;
+  --spinner-node: #ffffff;
   --shadow: 0 26px 80px rgba(0, 0, 0, 0.35);
-  --glass-bg: rgba(18, 22, 30, 0.58);
-  --glass-bg-strong: rgba(24, 29, 39, 0.8);
+  --glass-bg: rgba(10, 10, 10, 0.68);
+  --glass-bg-strong: rgba(16, 16, 18, 0.9);
   --glass-edge: rgba(255, 255, 255, 0.16);
   --glass-shadow:
     0 30px 80px rgba(0, 0, 0, 0.4),
@@ -110,14 +116,14 @@ html[data-theme="dark"] {
     linear-gradient(180deg, rgba(20, 24, 34, 0.76) 0%, rgba(15, 18, 26, 0.64) 100%);
   --home-panel-muted-bg: rgba(255, 255, 255, 0.045);
   --app-bg:
-    radial-gradient(circle at 14% 8%, rgba(139, 132, 255, 0.1), transparent 22%),
-    radial-gradient(circle at 86% 0%, rgba(255, 152, 117, 0.1), transparent 24%),
-    linear-gradient(180deg, #0a0d13 0%, #10151e 100%);
-  --app-sidebar-bg: rgba(13, 16, 23, 0.58);
-  --app-card-bg: rgba(24, 28, 37, 0.78);
-  --app-card-soft-bg: rgba(30, 35, 45, 0.62);
-  --app-text: #f7f4ef;
-  --app-text-soft: rgba(247, 244, 239, 0.64);
+    radial-gradient(circle at 14% 0%, rgba(28, 96, 214, 0.14), transparent 18%),
+    radial-gradient(circle at 84% 0%, rgba(183, 161, 227, 0.12), transparent 18%),
+    linear-gradient(180deg, #000000 0%, #050507 52%, #090b10 100%);
+  --app-sidebar-bg: rgba(10, 10, 10, 0.58);
+  --app-card-bg: rgba(16, 16, 18, 0.88);
+  --app-card-soft-bg: rgba(22, 22, 26, 0.82);
+  --app-text: #f5f7fb;
+  --app-text-soft: rgba(245, 247, 251, 0.66);
   --atmo-sky-top: #04070d;
   --atmo-sky-mid: #0c2138;
   --atmo-sky-bottom: #172131;
@@ -139,10 +145,8 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at 10% 10%, rgba(91, 104, 255, 0.14), transparent 18%),
-    radial-gradient(circle at 90% 6%, rgba(255, 122, 89, 0.14), transparent 18%),
-    radial-gradient(circle at 84% 76%, rgba(35, 201, 131, 0.1), transparent 18%),
-    linear-gradient(rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+    radial-gradient(circle at 10% 8%, rgba(153, 209, 255, 0.2), transparent 18%),
+    radial-gradient(circle at 90% 4%, rgba(255, 207, 228, 0.14), transparent 18%),
     linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
   color: var(--text);
   font-family: var(--font-sans);
@@ -681,7 +685,7 @@ html[data-theme="dark"] .home-atmosphere-shoreline {
   border: 1px solid color-mix(in srgb, var(--line) 72%, var(--glass-edge));
   background: var(--app-card-bg);
   box-shadow: var(--glass-shadow);
-  border-radius: 28px;
+  border-radius: 32px;
   backdrop-filter: blur(22px);
 }
 
@@ -703,7 +707,7 @@ html[data-theme="dark"] .home-atmosphere-shoreline {
 }
 
 .app-gradient {
-  background: linear-gradient(135deg, #6d5cff 0%, #a54ef6 55%, #ed669c 100%);
+  background: linear-gradient(135deg, #1c60d6 0%, #6f73d2 100%);
 }
 
 .app-image-overlay {
@@ -722,7 +726,7 @@ html[data-theme="dark"] .home-atmosphere-shoreline {
 .auth-hero {
   background:
     radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.14), transparent 24%),
-    linear-gradient(145deg, var(--brand) 0%, #7a84ff 54%, var(--brand-3) 100%);
+    linear-gradient(145deg, var(--brand) 0%, var(--brand-2) 54%, var(--brand-3) 100%);
 }
 
 .status-error {

@@ -13,13 +13,13 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "border-white/20 bg-[linear-gradient(135deg,var(--brand)_0%,color-mix(in_srgb,var(--brand)_72%,white)_100%)] text-white shadow-[0_20px_36px_rgba(91,104,255,0.28),inset_0_1px_0_rgba(255,255,255,0.28)] hover:-translate-y-0.5 hover:brightness-105",
+          "border-transparent bg-[color:var(--brand)] text-white shadow-[0_16px_28px_rgba(28,96,214,0.22)] hover:-translate-y-0.5 hover:bg-[color:color-mix(in_srgb,var(--brand)_88%,black)]",
         secondary:
-          "border-[color:var(--line)] bg-[color:var(--glass-bg)] text-[color:var(--text)] shadow-[inset_0_1px_0_rgba(255,255,255,0.42),0_16px_30px_rgba(24,32,51,0.1)] backdrop-blur-xl hover:-translate-y-0.5 hover:bg-[color:var(--glass-bg-strong)]",
+          "border-[color:var(--line)] bg-[color:var(--glass-bg)] text-[color:var(--text)] shadow-[inset_0_1px_0_rgba(255,255,255,0.42),0_10px_22px_rgba(24,32,51,0.08)] backdrop-blur-xl hover:-translate-y-0.5 hover:bg-[color:var(--glass-bg-strong)]",
         ghost:
           "border-transparent bg-transparent text-[color:var(--text)] hover:-translate-y-0.5 hover:border-[color:var(--line)] hover:bg-[color:var(--glass-hover)]",
         app:
-          "border-white/12 bg-[linear-gradient(180deg,color-mix(in_srgb,var(--app-card-bg)_86%,transparent),color-mix(in_srgb,var(--app-card-soft-bg)_96%,transparent))] text-[color:var(--app-text)] shadow-[0_18px_36px_rgba(15,23,42,0.16),inset_0_1px_0_rgba(255,255,255,0.2)] backdrop-blur-xl hover:-translate-y-0.5"
+          "border-[color:var(--line)] bg-[color:var(--glass-bg)] text-[color:var(--app-text)] shadow-[0_12px_22px_rgba(15,23,42,0.12),inset_0_1px_0_rgba(255,255,255,0.2)] backdrop-blur-xl hover:-translate-y-0.5 hover:bg-[color:var(--glass-bg-strong)]"
       },
       size: {
         sm: "h-9 px-4",

@@ -3,6 +3,13 @@ import type { ImportPipelineInput } from "@/lib/import-pipeline-types";
 
 type SupabaseLike = Awaited<ReturnType<typeof import("@/lib/supabase/server").createClient>>;
 
+type SupabaseErrorLike = {
+  message?: string;
+  details?: string;
+  hint?: string;
+  code?: string;
+};
+
 export type ImportArtifactRecord = {
   id: string;
   type: "url" | "text" | "image";
@@ -18,6 +25,27 @@ export type ImportJobRecord = {
   stage?: string;
   stage_detail?: string;
 } | null;
+
+function summarizeSupabaseError(error: SupabaseErrorLike | null | undefined) {
+  return [error?.message, error?.details, error?.hint].filter(Boolean).join(" ");
+}
+
+function isMissingColumnError(
+  error: SupabaseErrorLike | null | undefined,
+  columnName: string
+) {
+  const normalized = summarizeSupabaseError(error).toLowerCase();
+  const normalizedColumn = columnName.toLowerCase();
+
+  return (
+    normalized.includes(normalizedColumn) &&
+    (normalized.includes("column") ||
+      normalized.includes("schema cache") ||
+      normalized.includes("could not find") ||
+      error?.code === "42703" ||
+      error?.code === "PGRST204")
+  );
+}
 
 export function buildArtifactLabel(type: ImportPipelineInput["type"], title?: string | null) {
   if (type === "url") {
@@ -56,19 +84,37 @@ export async function createImportArtifact(input: {
 }) {
   const artifact = createQueuedArtifact({ type: input.payload.type });
 
+  const baseInsert = {
+    user_id: input.userId,
+    type: artifact.type,
+    label: artifact.label,
+    raw_content: input.payload.content,
+    status: "queued",
+    extracted_places: 0
+  };
+
   const { data, error } = await input.supabase
     .from("source_artifacts")
     .insert({
-      user_id: input.userId,
-      type: artifact.type,
-      label: artifact.label,
-      raw_content: input.payload.content,
-      status: "queued",
-      extracted_places: 0,
+      ...baseInsert,
       destination_hint: input.payload.destinationHint ?? ""
     })
     .select("id, type, label, status, created_at, extracted_places")
     .single();
+
+  if (isMissingColumnError(error, "destination_hint")) {
+    const fallback = await input.supabase
+      .from("source_artifacts")
+      .insert(baseInsert)
+      .select("id, type, label, status, created_at, extracted_places")
+      .single();
+
+    return {
+      artifact,
+      record: fallback.data as ImportArtifactRecord | null,
+      error: fallback.error
+    };
+  }
 
   return { artifact, record: data as ImportArtifactRecord | null, error };
 }
@@ -78,7 +124,7 @@ export async function createImportJob(input: {
   userId: string;
   artifactId: string;
 }) {
-  const { data } = await input.supabase
+  const { data, error } = await input.supabase
     .from("import_jobs")
     .insert({
       user_id: input.userId,
@@ -89,6 +135,20 @@ export async function createImportJob(input: {
     })
     .select("id, status, stage, stage_detail")
     .single();
+
+  if (isMissingColumnError(error, "stage") || isMissingColumnError(error, "stage_detail")) {
+    const fallback = await input.supabase
+      .from("import_jobs")
+      .insert({
+        user_id: input.userId,
+        source_artifact_id: input.artifactId,
+        status: "queued"
+      })
+      .select("id, status")
+      .single();
+
+    return (fallback.data as ImportJobRecord) ?? null;
+  }
 
   return (data as ImportJobRecord) ?? null;
 }
@@ -121,18 +181,36 @@ export async function updateImportJobProgress(input: {
     .eq("id", input.artifactId)
     .eq("user_id", input.userId);
 
-  await input.supabase
+  const updatePayload = {
+    status: input.status,
+    stage: input.stage,
+    stage_detail: input.stageDetail,
+    error_message: input.errorMessage ?? null,
+    started_at: startedAt,
+    finished_at: finishedAt
+  };
+
+  const { error } = await input.supabase
     .from("import_jobs")
-    .update({
-      status: input.status,
-      stage: input.stage,
-      stage_detail: input.stageDetail,
-      error_message: input.errorMessage ?? null,
-      started_at: startedAt,
-      finished_at: finishedAt
-    })
+    .update(updatePayload)
     .eq("source_artifact_id", input.artifactId)
     .eq("user_id", input.userId);
+
+  if (
+    isMissingColumnError(error, "stage") ||
+    isMissingColumnError(error, "stage_detail") ||
+    isMissingColumnError(error, "started_at") ||
+    isMissingColumnError(error, "finished_at")
+  ) {
+    await input.supabase
+      .from("import_jobs")
+      .update({
+        status: input.status,
+        error_message: input.errorMessage ?? null
+      })
+      .eq("source_artifact_id", input.artifactId)
+      .eq("user_id", input.userId);
+  }
 }
 
 export async function saveImportJobArtifacts(input: {
@@ -142,7 +220,7 @@ export async function saveImportJobArtifacts(input: {
   analysisPreview: Record<string, unknown>;
   providerRuns?: Array<Record<string, unknown>>;
 }) {
-  await input.supabase
+  const { error } = await input.supabase
     .from("import_jobs")
     .update({
       analysis_preview: input.analysisPreview,
@@ -150,6 +228,13 @@ export async function saveImportJobArtifacts(input: {
     })
     .eq("source_artifact_id", input.artifactId)
     .eq("user_id", input.userId);
+
+  if (
+    isMissingColumnError(error, "analysis_preview") ||
+    isMissingColumnError(error, "provider_runs")
+  ) {
+    return;
+  }
 }
 
 export async function updateImportArtifactLabel(input: {
