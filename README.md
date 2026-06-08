@@ -2,6 +2,24 @@
 
 Zylo is a travel-first public-beta web app that turns saved reels, posts, screenshots, and food finds into organized places, maps, and trip plans.
 
+## What it does
+Zylo turns saved Instagram reels and travel content into organized destination boards, 
+place maps, and trip itineraries. Users import links or text, and Zylo extracts and 
+groups destinations, restaurants, activities, and stays.
+
+## Live Demo
+https://zylov10-git-main-cindy-tang-projects.vercel.app
+
+Try it with these sample Instagram reels (no account needed for demo):
+- [Shenzhen](https://www.instagram.com/p/DQRR-UjCWlw/)
+- [Paris](https://www.instagram.com/p/DIROk2nJzRe/)
+- [Bangkok](https://www.instagram.com/p/DOjIm54EZZg/)
+(Full demo dataset of 30 reels across 20+ destinations available in-app)
+
+## Current Status
+Instagram/TikTok direct sync is in development. The current version supports 
+manual link import with full extraction and organization functionality.
+
 ## Stack
 
 - Next.js App Router
